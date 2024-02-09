@@ -1,0 +1,29 @@
+version: '3.7'
+
+x-default: &default
+  build:
+    dockerfile: Dockerfile
+  volumes:
+    - ./code:/app/mysite.local
+  networks:
+    - app-network
+
+services:
+  nginx:
+    <<: *default
+    container_name: webserver
+    image: myapp/nginx
+    build:
+      context: ./nginx
+    ports:
+      - "81:80"
+  application:
+    <<: *default
+    container_name: application
+    image: myapp/php
+    build:
+      context: ./fpm
+
+networks:
+  app-network:
+    driver: bridge

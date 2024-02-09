@@ -1,0 +1,35 @@
+/* <!-- <editor-folder Colors> --> */
+$white: #FFF;
+$white-dark: #EEE;
+$gray: #BBB;
+$gray-dark: #777;
+$dark: #444;
+$dark-dark: #222;
+$red: #D33;
+$red-dark: #933;
+$orange: #D53;
+$orange-dark: #953;
+$yellow: #BB3;
+$yellow-dark: #993;
+$green: #3B7;
+$green-dark: #175;
+$blue: #39D;
+$blue-dark: #179;
+$purple: #B5D;
+$purple-dark: #939;
+/* <!-- </editor-folder--> */
+
+/* <!-- <editor-folder Sizes> --> */
+// Размеры
+$size-xs: 576px; // xs( < 576px )
+$size-sm: 768px; // sm( >= 576px )
+$size-md: 992px; // md( >= 768px )
+$size-lg: 1200px; // lg( >= 992px )
+$size-xl: 1400px; //xl( >= 1200px ), xxl( >= 1400px )
+
+// Отступы
+$min-padding: 20px;
+$pd-desktop: max($min-padding, calc((100vw - $size-xl) / 2));
+$pd-tablet: max($min-padding, calc((100vw - $size-md) / 2));
+$pd-mobile: max($min-padding, calc((100vw - $size-xs) / 2));
+/* <!-- </editor-folder--> */

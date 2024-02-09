@@ -1,0 +1,147 @@
+@import "vars", "clear";
+
+/* <!-- <editor-folder Mixins> --> */
+@mixin flex($direction: row, $justify: stretch, $align: stretch, $gap: 0px) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: wrap;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+@mixin flexRow($justify: stretch, $align: stretch, $gap: 0px) {
+  @include flex(row, $justify, $align, $gap);
+}
+@mixin flexColumn($justify: stretch, $align: stretch, $gap: 0px) {
+  @include flex(column, $align, $justify, $gap);
+}
+/* <!-- </editor-folder--> */
+
+/* <!-- <editor-folder Main> --> */
+body {
+  display: grid;
+  grid-auto-rows: max-content auto max-content;
+  justify-content: stretch;
+  align-content: stretch;
+  background: $white;
+  min-height: 100vh;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+header, main, footer {
+  padding: 10px $pd-desktop;
+}
+
+header, footer {
+  background: $white-dark;
+  color: $dark;
+  cursor: default;
+}
+
+header {
+  @include flexColumn(center, end, 10px);
+
+  .menu {
+    @include flexRow(center, end, 10px);
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 20px;
+      border: 2px solid $white;
+      color: $blue;
+
+      &[current] {
+        color: $dark;
+      }
+    }
+  }
+}
+
+main {
+  display: block;
+}
+
+footer {
+  @include flexRow(end, center, 10px);
+}
+/* <!-- </editor-folder--> */
+
+/* <!-- <editor-folder Elements> --> */
+.error {
+  @include flexColumn(center, center, 10px);
+  height: 100%;
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    color: $dark;
+  }
+
+  .message {
+    font-size: 20px;
+    color: $gray;
+  }
+}
+
+.counter {
+  @include flexRow(space-between, center, 5px);
+  justify-self: end;
+  padding: 5px 10px;
+  min-width: 114px;
+  border: 1px solid $blue;
+  color: $blue;
+  font-size: 11px;
+
+  &:empty {
+    visibility: hidden;
+  }
+
+  &:before {
+    @include flexRow(center, center);
+    text-transform: lowercase;
+    font-size: 9px;
+    content: 'Просмотров:';
+  }
+}
+
+.info {
+  display: grid;
+  grid-template-columns: auto repeat(2, max-content);
+
+  .cell {
+    display: flex;
+    align-items: start;
+    padding: 5px 10px;
+
+    &.warning {
+      color: $red;
+      font-weight: 600;
+    }
+
+    &.url {
+      justify-content: start;
+    }
+
+    &.code {
+      justify-content: center;
+    }
+
+    &.views {
+      justify-content: right;
+    }
+
+    &:is(:nth-child(1), :nth-child(2), :nth-child(3)) {
+      justify-content: center;
+      font-style: italic;
+      background: $blue;
+      color: $white;
+    }
+
+    &:is(:nth-child(6n + 7), :nth-child(6n + 8), :nth-child(6n + 9)) {
+      background: $white-dark;
+    }
+  }
+}
+/* <!-- </editor-folder--> */

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>{{ title }}</title>
+    <!-- meta http-equiv -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="cache-control" content="private"/>
+    <!-- meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="referrer" content="origin"/>
+    <meta name="document-state" content="dynamic"/>
+    <meta name="robots" content="noarchive"/>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <!-- canonical -->
+    <link rel="canonical" href="{{ canonical }}" />
+    <!-- icon -->
+    <link type="image/x-icon" rel="shortcut icon" href="/storage/favicon.ico" />
+    <!-- styles -->
+    <link type="text/css" rel="stylesheet" href="/styles/style.css"/>
+</head>
+<body>
+
+<header>Header</header>
+<nav>
+    <a href="/">Главная</a>
+    <a href="/user">Пользователи</a>
+    <a href="/about">О нас</a>
+</nav>
+<main>
+    {% include content_template_name %}
+</main>
+<footer>
+    <div class="time">Обновлено в {{ 'now'|date('H:i:s', 'Europe/Moscow') }}</div>
+</footer>
+
+</body>
+</html>
