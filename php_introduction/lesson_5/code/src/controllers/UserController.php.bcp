@@ -1,9 +1,9 @@
 <?php
 
-namespace Geekbrains\Application1\Controllers;
+namespace Geekbrains\Application1\controllers;
 
 use Geekbrains\Application1\Render;
-use Geekbrains\Application1\Models\User;
+use Geekbrains\Application1\models\User;
 
 class UserController {
 

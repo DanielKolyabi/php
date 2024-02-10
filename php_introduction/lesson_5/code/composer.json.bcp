@@ -1,8 +1,8 @@
 {
-    "name": "root/app",
+    "name": "geekbrains/application1",
     "autoload": {
         "psr-4": {
-            "app\\": "src/"
+            "Geekbrains\\Application1\\": "src/"
         }
     },
     "require": {
