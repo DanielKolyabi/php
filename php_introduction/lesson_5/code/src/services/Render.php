@@ -25,27 +25,26 @@ class Render
 
     public function __construct()
     {
-        try {
-            $props = [];
-            if (self::CACHE_ENABLED) {
-                $props['cache'] = Helper::getPathRoot() . '/' . self::CACHE_FOLDER;
-            }
-            $this->loader = new FilesystemLoader(Helper::getView());
-            $this->environment = new Environment($this->loader, $props);
-        } catch (\Throwable $e) {
-            echo '<pre>';
-            print_r([
-                '$e2' => $e->getCode(),
-                '$e' => $e->getMessage(),
-            ]);
-            echo '</pre>';
+        $props = [];
+        if (self::CACHE_ENABLED) {
+            $props['cache'] = Helper::getPathRoot() . '/' . self::CACHE_FOLDER;
         }
+        $this->loader = new FilesystemLoader(Helper::getView());
+        $this->environment = new Environment($this->loader, $props);
+//        try { // TODO remove
+//        } catch (\Throwable $e) {
+//            echo '<pre>';
+//            print_r([
+//                '$e2' => $e->getCode(),
+//                '$e' => $e->getMessage(),
+//            ]);
+//            echo '</pre>';
+//        }
     }
 
     public function renderPage(array $props = [], $tplContent = '', $tplMain = 'content/main'): string
     {
-        $vars = [
-            ...$props,
+        $vars = array_merge($props, [
             'template_main' => $tplMain ? "$tplMain.twig" : null,
             'template_component' => $tplContent ? "$tplContent.twig" : null,
             'title' => $props['title'] ?? '',
@@ -53,10 +52,7 @@ class Render
             'keywords' => $props['keywords'] ?? '',
             'canonical' => $props['canonical'] ?? '/' . ltrim($_SERVER['REQUEST_URI'], '/'),
             'content' => $props['content'] ?? '',
-        ];
-//        echo '<pre>';
-//        print_r($vars);
-//        echo '</pre>';
+        ]);
         try {
             $template = $this->environment->load('main.twig');
             return $template->render($vars);

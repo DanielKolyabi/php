@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.0-fpm-alpine
 
 RUN apk add \
     htop \
@@ -10,11 +10,13 @@ RUN apk add \
 	zip \
 	unzip \
     oniguruma \
-    openssl \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-install calendar \
-    && docker-php-ext-install ftp \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer -q
+    openssl
+
+#RUN docker-php-ext-install bcmath \
+#    && docker-php-ext-install calendar \
+#    && docker-php-ext-install ftp
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer -q
 
 COPY php.ini /usr/local/etc/php/conf.d/php-custom.ini
 COPY run.sh /root

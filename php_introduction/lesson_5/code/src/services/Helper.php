@@ -11,12 +11,17 @@ abstract class Helper
 
     static public function getPathRoot(): string
     {
-        return trim($_SERVER['DOCUMENT_ROOT'], '/');
+        return '/' . trim($_SERVER['DOCUMENT_ROOT'], '/');
     }
 
     static public function getPathSrc(): string
     {
         return self::getPathRoot() . '/src';
+    }
+
+    static public function getPathStorage(): string
+    {
+        return self::getPathRoot() . '/storage';
     }
 
     static public function getController(...$address): string

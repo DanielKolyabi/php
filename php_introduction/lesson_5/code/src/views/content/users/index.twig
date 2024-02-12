@@ -1,0 +1,10 @@
+<h1>Список пользователей</h1>
+
+<ul>
+    {% for user in data %}
+        <li>
+            <a href="/users/profile/{{ user.username }}">{{ user.username }}</a>,
+            birthday: {{ user.birthday | date('d.m.Y') }}
+        </li>
+    {% endfor %}
+</ul>

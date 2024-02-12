@@ -1,0 +1,18 @@
+[
+    {
+        "username": "test1",
+        "birthday": "10-01-1984"
+    },
+    {
+        "username": "test2",
+        "birthday": "12-06-1992"
+    },
+    {
+        "username": "test3",
+        "birthday": "11-12-2001"
+    },
+    {
+        "username": "newUser",
+        "birthday": "10-10-2000"
+    }
+]

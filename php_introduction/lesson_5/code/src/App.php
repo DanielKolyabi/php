@@ -9,7 +9,10 @@ class App
 {
     static public function run(): string
     {
-        $url = explode('/', ltrim($_SERVER['REQUEST_URI'], '/'));
+        $uri = urldecode($_SERVER['REQUEST_URI']);
+        $query = urldecode($_SERVER['QUERY_STRING']);
+        $address = rtrim(!empty($query) ? str_replace($query, '', $uri) : $uri, '?');
+        $url = explode('/', ltrim($address, '/'));
         if (count($url) < 2 || empty($controllerName = array_shift($url))) {
             $controllerName = 'page';
         }
@@ -19,15 +22,13 @@ class App
         $controllerName = Helper::getController(ucfirst($controllerName) . 'Controller');
         $methodName = 'action' . ucfirst($methodName);
 
-
 //        echo '<pre>';
 //        print_r([
 //            '$controllerName' => $controllerName,
 //            '$methodName' => $methodName,
-//            '$url' => $url,
+//            '$props' => $url,
 //        ]);
 //        echo '</pre>';
-
 
         try {
             if (!class_exists($controllerName)) {
@@ -36,9 +37,14 @@ class App
             if (!method_exists($controllerName, $methodName) && !method_exists($controllerName, '__call')) {
                 throw new \Exception('Page not found!', 404);
             }
-            return (new $controllerName())->$methodName($url);
+            return (new $controllerName())->$methodName(...$url);
+        } catch (\ArgumentCountError) {
+            header("HTTP/1.1 404");
+            return Render::app()->renderError('Page not found!', 404);
         } catch (\Throwable $e) {
-            header("HTTP/1.1 {$e->getCode()}");
+            if ($e->getCode() > 0) {
+                header("HTTP/1.1 {$e->getCode()}");
+            }
             return Render::app()->renderError($e->getMessage(), $e->getCode());
         }
     }
