@@ -1,4 +1,5 @@
 /.idea
-/docker
-/php_introduction/sources
-/php_introduction/test
+.env
+composer.lock
+vendor
+database
