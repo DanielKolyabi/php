@@ -1,0 +1,14 @@
+[
+    {
+        "username": "newUser",
+        "birthday": "10-10-2000"
+    },
+    {
+        "username": "newUser2",
+        "birthday": "2024-02-19"
+    },
+    {
+        "username": "test",
+        "birthday": "2024-02-19"
+    }
+]

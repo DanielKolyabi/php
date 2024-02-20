@@ -1,0 +1,471 @@
+@charset "UTF-8";
+/* <!-- <editor-folder Colors> --> */
+/* <!-- </editor-folder--> */
+/* <!-- <editor-folder Sizes> --> */
+/* <!-- </editor-folder--> */
+/* <!-- <editor-folder LocalUse> --> */
+/* <!-- </editor-folder--> */
+* {
+  box-sizing: border-box;
+}
+
+html, body, div, img, a, hr, table, tr, td, h1, h2, h3, h4, h5, h6, input, select, textarea, button {
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  outline: none;
+  vertical-align: top;
+}
+
+::selection {
+  background: #28B;
+  color: #FFF;
+}
+
+::placeholder {
+  color: #222;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: #EEE;
+}
+::-webkit-scrollbar-thumb {
+  background: #BBB;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  text-align: left;
+  background: #FFF;
+  color: #222;
+}
+
+a {
+  transition: all 0.2s ease-in-out;
+  color: #2AD;
+  text-decoration: none;
+  cursor: pointer !important;
+}
+a:is(:hover, :focus) {
+  color: #28B;
+}
+
+img {
+  max-width: 100%;
+  object-fit: cover;
+}
+
+input, button, select, textarea {
+  border-radius: 2px;
+}
+
+input {
+  display: inline-flex;
+  justify-content: start;
+  align-items: center;
+  padding: 5px 10px;
+  width: 200px;
+  min-width: auto;
+  max-width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 0 2px 0;
+  background: #FFF;
+  color: #444;
+}
+input:disabled {
+  background: #EEE;
+  color: #BBB;
+}
+
+button, input:is([type=button], [type=submit], [type=reset]) {
+  display: inline-flex;
+  justify-content: start;
+  align-items: center;
+  padding: 5px 10px;
+  width: 200px;
+  min-width: auto;
+  max-width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 0 2px 0;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  background: #28B;
+  color: #EEE;
+  justify-content: center !important;
+}
+button:is(:hover, :focus), input:is([type=button], [type=submit], [type=reset]):is(:hover, :focus) {
+  background: #2AD;
+}
+button:disabled, input:is([type=button], [type=submit], [type=reset]):disabled {
+  background: #BBB;
+  color: #777;
+  cursor: not-allowed;
+}
+
+select, textarea {
+  display: inline-flex;
+  justify-content: start;
+  align-items: center;
+  padding: 4px 6px;
+  width: 200px;
+  min-width: auto;
+  max-width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 0 2px 0;
+  background: #FFF;
+  color: #444;
+}
+select:disabled, textarea:disabled {
+  background: #EEE;
+  color: #BBB;
+}
+
+/* <!-- <editor-folder Mixins> --> */
+/* <!-- </editor-folder--> */
+/* <!-- <editor-folder Main> --> */
+* {
+  max-width: 100%;
+}
+
+body {
+  display: grid;
+  grid-auto-rows: max-content auto max-content;
+  justify-content: stretch;
+  align-content: stretch;
+  background: #FFF;
+  color: #444;
+  min-height: 100vh;
+  max-width: 100%;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+header, footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  padding: 10px calc(min(max(20px, (100vw - 1400px) / 2), min(max(20px, (100vw - 1400px) / 2), max(20px, (100vw - 1400px) / 2 - 300px)) + 300px) + 20px);
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 5px;
+  background: #2AD;
+  color: #FFF;
+  cursor: default;
+  z-index: 1;
+}
+
+header a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+header a:is(:hover, :focus) {
+  color: inherit;
+  text-decoration: none;
+}
+
+main {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min-content, 300px) minmax(auto, 1400px);
+  justify-content: stretch;
+  align-content: stretch;
+  padding: 0 min(max(20px, (100vw - 1400px) / 2), max(20px, (100vw - 1400px) / 2 - 300px));
+}
+main #menu {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: end;
+  gap: 5px;
+  position: relative;
+  padding: 10px 0;
+  margin-bottom: auto;
+  background: #2AD;
+  color: #FFF;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 5px;
+}
+main #menu:before {
+  background: linear-gradient(-2deg, transparent 12px, rgba(0, 0, 0, 0) 0, #2AD 14px);
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  bottom: -20px;
+  content: "";
+  z-index: -1;
+}
+main #menu a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  max-width: calc(100% - 10px);
+  padding: 5px 20px;
+  text-decoration: none;
+  color: inherit;
+}
+main #menu a.current {
+  background: #FFF;
+  color: #444;
+}
+main #menu a.current:before {
+  background: linear-gradient(80deg, transparent 8px, rgba(0, 0, 0, 0) 0, #FFF 10px);
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  top: 0;
+  left: -10px;
+  content: "";
+}
+main #content {
+  display: block;
+  padding: 15px 20px;
+}
+main #error {
+  grid-column: 1/3;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 5px;
+}
+main #error > * {
+  padding: 5px 20px;
+  max-width: 600px;
+  width: 100%;
+}
+main #error .title {
+  border-radius: 5px 5px 0 0;
+  background: #B33;
+  box-shadow: #B33 0 -1px 10px -2px;
+  color: #FFF;
+  font-size: 24px;
+  font-weight: bold;
+}
+main #error .message {
+  border-radius: 0 0 5px 5px;
+  box-shadow: #B33 0 1px 10px -4px;
+  color: #444;
+  font-size: 18px;
+  min-height: 80px;
+}
+main #error .links {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: end;
+  gap: 0px;
+  padding: 10px;
+}
+main #error .links a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+main #error .links a:after {
+  font-size: 16px;
+  content: "○";
+}
+main #error .links a:is(:hover, :focus):after {
+  content: "●";
+}
+
+.hide {
+  display: none !important;
+}
+
+.popup {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+.popup .close {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  background: #B33;
+  border: 1px solid #B33;
+  color: #FFF;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  transform: rotate(45deg);
+  margin: -32px -18px 0 0;
+  cursor: pointer;
+}
+.popup .close:before {
+  position: absolute;
+  content: "+";
+  font-size: 40px;
+}
+.popup:before {
+  background: #222;
+  opacity: 0.6;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  content: "";
+  z-index: -1;
+}
+.popup > *:not(.close) {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: stretch;
+  gap: 10px;
+  background: #FFF !important;
+  padding: 20px !important;
+  border-radius: 2px !important;
+}
+
+/* <!-- </editor-folder--> */
+/* <!-- <editor-folder Users> --> */
+.users-form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: start;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 10px;
+  width: 100%;
+  max-width: 350px;
+  border: 1px solid #EEE;
+  border-radius: 2px;
+}
+.users-form .title {
+  font-weight: bold;
+}
+.users-form label {
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+.users-form .error-message {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  flex-wrap: wrap;
+  color: #D33;
+}
+.users-form > * {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.users-form button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  max-width: 100%;
+}
+.users-list > * {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 10px;
+}
+.users-list > *:nth-child(6n-3) {
+  background: #EEE;
+}
+.users-list > *:nth-child(6n-4) {
+  background: #EEE;
+}
+.users-list > *:nth-child(6n-5) {
+  background: #EEE;
+}
+.users-list > *:nth-child(1) {
+  justify-content: center;
+  background: #2AD;
+  color: #FFF;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.users-list > *:nth-child(2) {
+  justify-content: center;
+  background: #2AD;
+  color: #FFF;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.users-list > *:nth-child(3) {
+  justify-content: center;
+  background: #2AD;
+  color: #FFF;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.users-list :nth-child(3n-2) {
+  border-radius: 2px 0 0 2px;
+  justify-content: start;
+}
+.users-list :nth-child(3n) {
+  border-radius: 0 2px 2px 0;
+  justify-content: end;
+}
+.users-list .control {
+  gap: 10px;
+}
+.users-list .control .update {
+  color: #2B7;
+  cursor: pointer;
+}
+.users-list .control .remove {
+  color: #B33;
+  cursor: pointer;
+}
+
+/* <!-- </editor-folder--> */
+
+/*# sourceMappingURL=style.css.map */

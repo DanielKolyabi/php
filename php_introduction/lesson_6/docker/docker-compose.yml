@@ -1,0 +1,46 @@
+version: '3.7'
+
+x-default: &default
+  env_file:
+    - .env
+  networks:
+    - app-network
+x-app: &app
+  <<: *default
+  build:
+    dockerfile: Dockerfile
+  volumes:
+    - ../app:/app/mysite.local
+
+services:
+  nginx:
+    <<: *app
+    container_name: webserver
+    image: myapp/nginx
+    build:
+      context: ./webserver
+    ports:
+      - "81:80"
+  php-fpm:
+    <<: *app
+    container_name: application
+    image: myapp/php
+    build:
+      context: ./application
+  mysql:
+    <<: *default
+    container_name: database
+    image: mysql:5.7
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - ./database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>{{ title }}</title>
+    <!-- meta http-equiv -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="cache-control" content="private"/>
+    <!-- meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="referrer" content="origin"/>
+    <meta name="document-state" content="dynamic"/>
+    <meta name="robots" content="noarchive"/>
+    <meta name="description" content="{{ description }}"/>
+    <meta name="keywords" content="{{ keywords }}"/>
+    <!-- canonical -->
+    <link rel="canonical" href="{{ canonical }}"/>
+    <!-- icon -->
+    <link type="image/x-icon" rel="shortcut icon" href="/favicon.ico"/>
+    <!-- styles -->
+    <link type="text/css" rel="stylesheet" href="/styles/style.css"/>
+</head>
+<body>
+
+<header>
+    {% include 'content/header.twig' %}
+</header>
+<main>
+    {% if template_main %}
+        {% include template_main %}
+    {% else %}
+        {% include 'content/main.twig' %}
+    {% endif %}
+</main>
+<footer>
+    {% include 'content/footer.twig' %}
+</footer>
+
+</body>
+</html>
