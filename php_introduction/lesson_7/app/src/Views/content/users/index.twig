@@ -1,0 +1,232 @@
+<h1>Список пользователей</h1>
+
+<div class="users-form create">
+    <div class="title">
+        Create new user
+    </div>
+    <div>
+        <label for="username">username *</label>
+        <input id="username" type="text" name="username">
+    </div>
+    <div>
+        <label for="password">password *</label>
+        <input id="password" type="password" name="password">
+    </div>
+    <div>
+        <label for="passwordRepeat">password (repeat) *</label>
+        <input id="passwordRepeat" type="password" name="passwordRepeat">
+    </div>
+    <div>
+        <label for="email">email *</label>
+        <input id="email" type="email" name="email">
+    </div>
+    <div>
+        <label for="birthday">birthday</label>
+        <input id="birthday" type="date" name="birthday">
+    </div>
+    <div class="error-message hide"></div>
+    <button>Create</button>
+</div>
+
+<div class="popup hide">
+    <div class="users-form update">
+        <div class="title">
+            <span>Update user</span>
+            <div class="close"></div>
+        </div>
+        <input id="id" type="hidden" name="id">
+
+
+{#        <div>#}
+{#            <label for="username">username *</label>#}
+{#            <input id="username" type="text" name="username">#}
+{#        </div>#}
+        <div>
+            <label for="passwordOld">password old *</label>
+            <input id="passwordOld" type="password" name="passwordOld">
+        </div>
+        <div>
+            <label for="password">password new *</label>
+            <input id="password" type="password" name="password">
+        </div>
+        <div>
+            <label for="passwordRepeat">password new (repeat) *</label>
+            <input id="passwordRepeat" type="password" name="passwordRepeat">
+        </div>
+        <div>
+            <label for="email">email *</label>
+            <input id="email" type="email" name="email">
+        </div>
+        <div>
+            <label for="birthday">birthday</label>
+            <input id="birthday" type="date" name="birthday">
+        </div>
+
+        <!--
+        <div>
+            <label for="firstName">First name</label>
+            <input id="firstName" type="text" name="firstName">
+        </div>
+        <div>
+            <label for="lastName">Last name</label>
+            <input id="lastName" type="text" name="lastName">
+        </div>
+        <div>
+            <label for="birthDay">Birthday</label>
+            <input id="birthDay" type="date" name="birthDay">
+        </div>
+        -->
+        <div class="error-message hide"></div>
+        <button>Save</button>
+    </div>
+</div>
+
+<div class="users-list">
+    <div>username</div>
+    <div>email</div>
+    <div>birthday</div>
+    <div>created at</div>
+    <div></div>
+    {% for user in data %}
+        <div>{{ user.username }}</a></div>
+        <div>{{ user.email }}</a></div>
+        {% if user.birthday %}
+            <div>{{ user.birthday | date('d.m.Y') }}</div>
+        {% else %}
+            <div>не указано</div>
+        {% endif %}
+        <div>{{ user.created_at | date('d.m.Y') }}</a></div>
+        <div class="control" data-id="{{ user.id }}">
+            <span class="update">update</span>
+            <span class="remove">remove</span>
+        </div>
+    {% endfor %}
+
+
+{#    {% for user in data %}#}
+{#        <div><a href="/users/profile/{{ user.id_user }}">{{ user.user_name }} {{ user.user_lastname }}</a></div>#}
+{#        {% if user.user_birthday_timestamp %}#}
+{#            <div>{{ user.user_birthday_timestamp | date('d.m.Y') }}</div>#}
+{#        {% else %}#}
+{#            <div>не указано</div>#}
+{#        {% endif %}#}
+{#        <div class="control" data-id="{{ user.id_user }}">#}
+{#            <span class="update">update</span>#}
+{#            <span class="remove">remove</span>#}
+{#        </div>#}
+{#    {% endfor %}#}
+</div>
+
+{# TODO list pages #}
+{#TODO REWORK!!!!#}
+
+<script>
+    const getData = (obj) => {
+        const data = {
+            username: obj.querySelector('#username').value,
+            passwordOld: obj.querySelector('#password').value,
+            password: obj.querySelector('#password').value,
+            passwordRepeat: obj.querySelector('#passwordRepeat').value,
+            email: obj.querySelector('#email').value,
+            birthday: obj.querySelector('#birthday').value,
+        };
+        const request = {};
+        if (data.username.length > 0) {
+            request.username = data.username;
+        }
+        if (data.password.length > 0 && data.password === data.passwordRepeat) {
+            if (data.passwordOld !== undefined) {
+                request.passwordOld = data.passwordOld;
+                request.passwordNew = data.password;
+            } else {
+                request.password = data.password;
+            }
+        }
+        if (data.email.length > 0) {
+            request.email = data.email;
+        }
+        if (data.birthday.length > 0) {
+            request.birthday = data.birthday;
+        }
+        return request;
+        // return {
+        //     // username: obj.querySelector('#username').value,
+        //     // birthday: obj.querySelector('#birthday').value,
+        //
+        //     user_name: obj.querySelector('#firstName').value,
+        //     user_lastname: obj.querySelector('#lastName').value,
+        //     user_birthday_timestamp: obj.querySelector('#birthDay').value,
+        // }
+    };
+    const formCreate = document.querySelector('.users-form.create');
+    const formUpdate = document.querySelector('.users-form.update');
+    const usersList = document.querySelector('.users-list');
+    const popup = formUpdate.parentElement;
+
+    formCreate.querySelector('button').addEventListener('click', () => sendData('create', formCreate));
+    formUpdate.querySelector('button').addEventListener('click', () => sendData('update', formUpdate));
+    usersList.addEventListener('click', ({target}) => {
+        switch (target.className) {
+            case 'update':
+                showPopupUpdate(target.parentElement.dataset.id);
+                break;
+            case 'remove':
+                sendData('delete', null, {id: target.parentElement.dataset.id});
+                break;
+        }
+    });
+    popup.querySelector('.close').addEventListener('click', () => popup.classList.add('hide'));
+
+    function showPopupUpdate(id) {
+        popup.classList.remove('hide');
+        fetch(`/users/get?id=${id}`)
+            .then(async res => {
+                const data = await res.json();
+                if (!data.error) {
+                    formUpdate.querySelector(`#id`).value = String(data.data.id);
+                    // formUpdate.querySelector(`#username`).value = String(data.data.username);
+                    // formUpdate.querySelector(`#lastName`).value = String(data.data.user_lastname);
+                    formUpdate.querySelector(`#email`).value = String(data.data.email);
+                    formUpdate.querySelector(`#birthday`).value = String(data.data.birthday);
+                    // Object.entries(data.data).forEach(([key, value]) => {
+                    //     formUpdate.querySelector(`#${key}`).value = String(value);
+                    // });
+                }
+            });
+    }
+
+    function sendData(method, obj, data = {}) {
+        const props = [];
+        if (obj !== null) {
+            props.push(new URLSearchParams(getData(obj)).toString());
+            if (method === 'update') {
+                props.push(new URLSearchParams({id: obj.querySelector('#id').value}).toString());
+            }
+        }
+        if (Object.values(data).length > 0) {
+            props.push(new URLSearchParams(data).toString());
+        }
+        const url = `/users/${method}?${props.join('&')}`;
+        const error = obj?.querySelector('.error-message');
+        const button = obj?.querySelector('button');
+        !button || (button.disabled = true);
+        !error || error.classList.add('hide');
+        fetch(url)
+            .then(async res => {
+                const data = await res.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                window.location.reload();
+            })
+            .catch(err => {
+                if (error) {
+                    error.innerHTML = err.message;
+                    error.classList.remove('hide');
+                }
+            })
+            .finally(() => {
+                !button || (button.disabled = false);
+            });
+    }
+</script>

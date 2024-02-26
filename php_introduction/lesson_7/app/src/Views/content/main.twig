@@ -1,0 +1,30 @@
+<nav id="menu"></nav>
+<div id="content">
+    {% if template_component %}
+        {% include template_component %}
+    {% else %}
+        {{ content }}
+    {% endif %}
+</div>
+
+<script defer>
+    'use strict';
+    const menuEl = document.querySelector('nav#menu');
+    const canonical = document.querySelector('link[rel=canonical]').href;
+    (async () => {
+        const data = await fetch('/storage/menu.json');
+        const json = await data.json();
+        json.forEach(e => {
+            const el = document.createElement('a');
+            el.innerHTML = e.name;
+            el.href = e.url;
+            if (e.target) {
+                el.target = e.target;
+            }
+            if (el.href === canonical) {
+                el.classList.add('current');
+            }
+            menuEl.appendChild(el);
+        });
+    })();
+</script>

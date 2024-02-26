@@ -1,0 +1,42 @@
+/* <!-- <editor-folder Colors> --> */
+$white: #FFF;
+$white-dark: #EEE;
+$gray: #BBB;
+$gray-dark: #777;
+$dark: #444;
+$dark-dark: #222;
+$red: #D33;
+$red-dark: #B33; // #933;
+$orange: #D72; // #D53;
+$orange-dark: #B62; // #953;
+$yellow: #DC2; // #BB2;
+$yellow-dark: #BA2; // #993;
+$green: #2D8; // #3B7;
+$green-dark: #2B7; // #175;
+$blue: #2AD; // #39D;
+$blue-dark: #28B; // #179;
+$purple: #B6D; // #B5D;
+$purple-dark: #A4C; // #939;
+/* <!-- </editor-folder--> */
+
+/* <!-- <editor-folder Sizes> --> */
+// Размеры
+$size-xs: 576px; // xs( < 576px )
+$size-sm: 768px; // sm( >= 576px )
+$size-md: 992px; // md( >= 768px )
+$size-lg: 1200px; // lg( >= 992px )
+$size-xl: 1400px; //xl( >= 1200px ), xxl( >= 1400px )
+
+// Размеры
+$min-padding: 20px;
+$radius: 5px;
+
+$sidebar-width: 300px;
+
+$content-width: $size-xl;
+$content-pw: calc((100vw - $content-width) / 2);
+
+$base-pw: max($min-padding, $content-pw);
+$content-padding: min($base-pw, max($min-padding, $content-pw - $sidebar-width));
+$base-padding: min($base-pw, calc($content-padding + $sidebar-width));
+/* <!-- </editor-folder--> */

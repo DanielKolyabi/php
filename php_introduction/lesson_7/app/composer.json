@@ -1,0 +1,13 @@
+{
+  "name": "root/app",
+  "autoload": {
+    "psr-4": {
+      "Root\\App\\": "src/"
+    }
+  },
+  "require": {
+    "ext-pdo": "*",
+    "twig/twig": "^3.0",
+    "httpsoft/http-response": "^1.1"
+  }
+}
