@@ -3,20 +3,30 @@
 /* <!-- </editor-folder--> */
 /* <!-- <editor-folder Sizes> --> */
 /* <!-- </editor-folder--> */
+/* <!-- <editor-folder Mixins> --> */
+/* <!-- </editor-folder--> */
 /* <!-- <editor-folder LocalUse> --> */
 /* <!-- </editor-folder--> */
 * {
   box-sizing: border-box;
 }
 
-html, body, div, img, a, hr, table, tr, td, h1, h2, h3, h4, h5, h6, input, select, textarea, button {
+html, body, div, img, a, hr, table, tr, td, input, select, textarea, button {
   border: none;
   border-radius: 0;
   margin: 0;
   padding: 0;
   font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
   outline: none;
   vertical-align: top;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 10px;
+  padding: 0;
 }
 
 ::selection {
@@ -62,7 +72,7 @@ img {
 }
 
 input, button, select, textarea {
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 input {
@@ -80,6 +90,43 @@ input {
 input:disabled {
   background: #EEE;
   color: #BBB;
+}
+input[type=checkbox] {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  visibility: hidden;
+}
+input[type=checkbox]:before, input[type=checkbox]:after {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease-in;
+  border-radius: 3px;
+  border: inherit;
+  box-shadow: inherit;
+  background: #FFF;
+  position: absolute;
+  visibility: visible;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+}
+input[type=checkbox]:after {
+  border-radius: 2px;
+  box-shadow: inherit;
+  background: #EEE;
+  margin: 4px;
+}
+input[type=checkbox]:checked:after {
+  box-shadow: #2B7 0 0 2px 0;
+  background: #2D8;
 }
 
 button, input:is([type=button], [type=submit], [type=reset]) {
@@ -123,8 +170,6 @@ select:disabled, textarea:disabled {
   color: #BBB;
 }
 
-/* <!-- <editor-folder Mixins> --> */
-/* <!-- </editor-folder--> */
 /* <!-- <editor-folder Main> --> */
 * {
   max-width: 100%;
@@ -349,7 +394,7 @@ main #error .links a:is(:hover, :focus):after {
   gap: 10px;
   background: #FFF !important;
   padding: 20px !important;
-  border-radius: 2px !important;
+  border-radius: 3px !important;
 }
 
 /* <!-- </editor-folder--> */
@@ -366,7 +411,7 @@ main #error .links a:is(:hover, :focus):after {
   width: 100%;
   max-width: 450px;
   border: 1px solid #EEE;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .users-form .title {
   font-weight: bold;
@@ -374,6 +419,7 @@ main #error .links a:is(:hover, :focus):after {
 .users-form label {
   opacity: 0.8;
   text-transform: uppercase;
+  cursor: default;
 }
 .users-form .error-message {
   display: flex;
@@ -394,6 +440,15 @@ main #error .links a:is(:hover, :focus):after {
   gap: 10px;
   width: 100%;
 }
+.users-form > * > * {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+  text-transform: none !important;
+}
 .users-form button {
   display: flex;
   flex-direction: row;
@@ -404,7 +459,7 @@ main #error .links a:is(:hover, :focus):after {
 }
 .users-list {
   display: grid;
-  grid-template-columns: repeat(5, auto);
+  grid-template-columns: repeat(6, auto);
   max-width: 100%;
 }
 .users-list > * {
@@ -416,19 +471,22 @@ main #error .links a:is(:hover, :focus):after {
   gap: 0px;
   padding: 5px 10px;
 }
-.users-list > *:nth-child(10n-5) {
+.users-list > *:nth-child(12n-6) {
   background: #EEE;
 }
-.users-list > *:nth-child(10n-6) {
+.users-list > *:nth-child(12n-7) {
   background: #EEE;
 }
-.users-list > *:nth-child(10n-7) {
+.users-list > *:nth-child(12n-8) {
   background: #EEE;
 }
-.users-list > *:nth-child(10n-8) {
+.users-list > *:nth-child(12n-9) {
   background: #EEE;
 }
-.users-list > *:nth-child(10n-9) {
+.users-list > *:nth-child(12n-10) {
+  background: #EEE;
+}
+.users-list > *:nth-child(12n-11) {
   background: #EEE;
 }
 .users-list > *:nth-child(1) {
@@ -437,6 +495,24 @@ main #error .links a:is(:hover, :focus):after {
   color: #FFF;
   font-weight: bold;
   text-transform: uppercase;
+  min-height: 36px;
+}
+.users-list > *:nth-child(1) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
+}
+.users-list > *:nth-child(1) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
 }
 .users-list > *:nth-child(2) {
   justify-content: center;
@@ -444,6 +520,24 @@ main #error .links a:is(:hover, :focus):after {
   color: #FFF;
   font-weight: bold;
   text-transform: uppercase;
+  min-height: 36px;
+}
+.users-list > *:nth-child(2) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
+}
+.users-list > *:nth-child(2) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
 }
 .users-list > *:nth-child(3) {
   justify-content: center;
@@ -451,6 +545,24 @@ main #error .links a:is(:hover, :focus):after {
   color: #FFF;
   font-weight: bold;
   text-transform: uppercase;
+  min-height: 36px;
+}
+.users-list > *:nth-child(3) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
+}
+.users-list > *:nth-child(3) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
 }
 .users-list > *:nth-child(4) {
   justify-content: center;
@@ -458,6 +570,24 @@ main #error .links a:is(:hover, :focus):after {
   color: #FFF;
   font-weight: bold;
   text-transform: uppercase;
+  min-height: 36px;
+}
+.users-list > *:nth-child(4) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
+}
+.users-list > *:nth-child(4) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
 }
 .users-list > *:nth-child(5) {
   justify-content: center;
@@ -465,14 +595,55 @@ main #error .links a:is(:hover, :focus):after {
   color: #FFF;
   font-weight: bold;
   text-transform: uppercase;
+  min-height: 36px;
 }
-.users-list :nth-child(5n-4) {
-  border-radius: 2px 0 0 2px;
-  justify-content: start;
+.users-list > *:nth-child(5) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
 }
-.users-list :nth-child(5n) {
-  border-radius: 0 2px 2px 0;
-  justify-content: end;
+.users-list > *:nth-child(5) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
+}
+.users-list > *:nth-child(6) {
+  justify-content: center;
+  background: #2AD;
+  color: #FFF;
+  font-weight: bold;
+  text-transform: uppercase;
+  min-height: 36px;
+}
+.users-list > *:nth-child(6) > a {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  padding: 5px 20px;
+  text-transform: none;
+  color: #FFF;
+  border-radius: 3px;
+  box-shadow: #FFF 0 0 5px -1px;
+  text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 1px;
+}
+.users-list > *:nth-child(6) > a:is(:hover, :focus) {
+  background: rgba(0, 0, 0, 0.1);
+}
+.users-list > :nth-child(6n-5) {
+  border-radius: 3px 0 0 3px;
+}
+.users-list > :nth-child(6n) {
+  border-radius: 0 3px 3px 0;
 }
 .users-list .control {
   gap: 10px;

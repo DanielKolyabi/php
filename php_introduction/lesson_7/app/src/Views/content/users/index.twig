@@ -1,232 +1,265 @@
 <h1>Список пользователей</h1>
 
-<div class="users-form create">
-    <div class="title">
-        Create new user
+<div class="popup create hide">
+    <div class="users-form create">
+        <div class="title">
+            Create new user
+            <a class="close" href="#"></a>
+        </div>
+        <label>
+            <span>group</span>
+            <select name="group_id"></select>
+        </label>
+        <label>
+            <span>* username</span>
+            <input type="text" name="username">
+        </label>
+        <label>
+            <span>* password</span>
+            <input type="password" name="password">
+        </label>
+        <label>
+            <span>* email</span>
+            <input type="email" name="email">
+        </label>
+        <label>
+            <span>birthday</span>
+            <input type="date" name="birthday">
+        </label>
+        <div class="error-message hide"></div>
+        <button>Create</button>
     </div>
-    <div>
-        <label for="username">username *</label>
-        <input id="username" type="text" name="username">
-    </div>
-    <div>
-        <label for="password">password *</label>
-        <input id="password" type="password" name="password">
-    </div>
-    <div>
-        <label for="passwordRepeat">password (repeat) *</label>
-        <input id="passwordRepeat" type="password" name="passwordRepeat">
-    </div>
-    <div>
-        <label for="email">email *</label>
-        <input id="email" type="email" name="email">
-    </div>
-    <div>
-        <label for="birthday">birthday</label>
-        <input id="birthday" type="date" name="birthday">
-    </div>
-    <div class="error-message hide"></div>
-    <button>Create</button>
 </div>
 
-<div class="popup hide">
+<div class="popup update hide">
     <div class="users-form update">
         <div class="title">
             <span>Update user</span>
-            <div class="close"></div>
+            <a class="close" href="#"></a>
         </div>
-        <input id="id" type="hidden" name="id">
-
-
-{#        <div>#}
-{#            <label for="username">username *</label>#}
-{#            <input id="username" type="text" name="username">#}
-{#        </div>#}
+        <input type="hidden" name="id">
+        <label>
+            <span>username</span>
+            <input type="text" name="username" disabled>
+        </label>
+        <label>
+            <span>group</span>
+            <select name="group_id"></select>
+        </label>
+        <label>
+            <span>password</span>
+            <input type="password" name="password">
+        </label>
         <div>
-            <label for="passwordOld">password old *</label>
-            <input id="passwordOld" type="password" name="passwordOld">
+            <span></span>
+            <label>
+                <span>change password</span>
+                <input type="checkbox" data-for="password">
+            </label>
         </div>
-        <div>
-            <label for="password">password new *</label>
-            <input id="password" type="password" name="password">
-        </div>
-        <div>
-            <label for="passwordRepeat">password new (repeat) *</label>
-            <input id="passwordRepeat" type="password" name="passwordRepeat">
-        </div>
-        <div>
-            <label for="email">email *</label>
-            <input id="email" type="email" name="email">
-        </div>
-        <div>
-            <label for="birthday">birthday</label>
-            <input id="birthday" type="date" name="birthday">
-        </div>
-
-        <!--
-        <div>
-            <label for="firstName">First name</label>
-            <input id="firstName" type="text" name="firstName">
-        </div>
-        <div>
-            <label for="lastName">Last name</label>
-            <input id="lastName" type="text" name="lastName">
-        </div>
-        <div>
-            <label for="birthDay">Birthday</label>
-            <input id="birthDay" type="date" name="birthDay">
-        </div>
-        -->
+        <label>
+            <span>* email</span>
+            <input type="email" name="email">
+        </label>
+        <label>
+            <span>birthday</span>
+            <input type="date" name="birthday">
+        </label>
         <div class="error-message hide"></div>
         <button>Save</button>
     </div>
 </div>
 
 <div class="users-list">
-    <div>username</div>
-    <div>email</div>
-    <div>birthday</div>
-    <div>created at</div>
-    <div></div>
+    <div class="group">group</div>
+    <div class="username">username</div>
+    <div class="email">email</div>
+    <div class="birthday">birthday</div>
+    <div class="created-at">created at</div>
+    <div class="control"><a href="#" class="create">New user +</a></div>
     {% for user in data %}
-        <div>{{ user.username }}</a></div>
-        <div>{{ user.email }}</a></div>
-        {% if user.birthday %}
-            <div>{{ user.birthday | date('d.m.Y') }}</div>
-        {% else %}
-            <div>не указано</div>
-        {% endif %}
-        <div>{{ user.created_at | date('d.m.Y') }}</a></div>
+        <div class="group">{{ user.group }}</div>
+        <div class="username">{{ user.username }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="birthday">
+            {% if user.birthday %}
+                {{ user.birthday | date('d.m.Y') }}
+            {% else %}
+                не указано
+            {% endif %}
+        </div>
+        <div class="created-at">{{ user.created_at | date('d.m.Y') }}</a></div>
         <div class="control" data-id="{{ user.id }}">
-            <span class="update">update</span>
-            <span class="remove">remove</span>
+            <a class="update" href="#">update</a>
+            <a class="remove" href="#">remove</a>
         </div>
     {% endfor %}
-
-
-{#    {% for user in data %}#}
-{#        <div><a href="/users/profile/{{ user.id_user }}">{{ user.user_name }} {{ user.user_lastname }}</a></div>#}
-{#        {% if user.user_birthday_timestamp %}#}
-{#            <div>{{ user.user_birthday_timestamp | date('d.m.Y') }}</div>#}
-{#        {% else %}#}
-{#            <div>не указано</div>#}
-{#        {% endif %}#}
-{#        <div class="control" data-id="{{ user.id_user }}">#}
-{#            <span class="update">update</span>#}
-{#            <span class="remove">remove</span>#}
-{#        </div>#}
-{#    {% endfor %}#}
 </div>
 
-{# TODO list pages #}
-{#TODO REWORK!!!!#}
+<form action="/users/auth" method="get" class="users-form">
+    {# TODO auth #}
+    <label>
+        <span>login:</span>
+        <input type="text" name="username">
+    </label>
+    <label>
+        <span>password:</span>
+        <input type="password" name="password">
+    </label>
+    <button>Auth</button>
+</form>
 
-<script>
-    const getData = (obj) => {
-        const data = {
-            username: obj.querySelector('#username').value,
-            passwordOld: obj.querySelector('#password').value,
-            password: obj.querySelector('#password').value,
-            passwordRepeat: obj.querySelector('#passwordRepeat').value,
-            email: obj.querySelector('#email').value,
-            birthday: obj.querySelector('#birthday').value,
-        };
-        const request = {};
-        if (data.username.length > 0) {
-            request.username = data.username;
-        }
-        if (data.password.length > 0 && data.password === data.passwordRepeat) {
-            if (data.passwordOld !== undefined) {
-                request.passwordOld = data.passwordOld;
-                request.passwordNew = data.password;
-            } else {
-                request.password = data.password;
-            }
-        }
-        if (data.email.length > 0) {
-            request.email = data.email;
-        }
-        if (data.birthday.length > 0) {
-            request.birthday = data.birthday;
-        }
-        return request;
-        // return {
-        //     // username: obj.querySelector('#username').value,
-        //     // birthday: obj.querySelector('#birthday').value,
-        //
-        //     user_name: obj.querySelector('#firstName').value,
-        //     user_lastname: obj.querySelector('#lastName').value,
-        //     user_birthday_timestamp: obj.querySelector('#birthDay').value,
-        // }
-    };
-    const formCreate = document.querySelector('.users-form.create');
-    const formUpdate = document.querySelector('.users-form.update');
-    const usersList = document.querySelector('.users-list');
-    const popup = formUpdate.parentElement;
-
-    formCreate.querySelector('button').addEventListener('click', () => sendData('create', formCreate));
-    formUpdate.querySelector('button').addEventListener('click', () => sendData('update', formUpdate));
-    usersList.addEventListener('click', ({target}) => {
-        switch (target.className) {
-            case 'update':
-                showPopupUpdate(target.parentElement.dataset.id);
-                break;
-            case 'remove':
-                sendData('delete', null, {id: target.parentElement.dataset.id});
-                break;
-        }
-    });
-    popup.querySelector('.close').addEventListener('click', () => popup.classList.add('hide'));
-
-    function showPopupUpdate(id) {
-        popup.classList.remove('hide');
-        fetch(`/users/get?id=${id}`)
-            .then(async res => {
-                const data = await res.json();
-                if (!data.error) {
-                    formUpdate.querySelector(`#id`).value = String(data.data.id);
-                    // formUpdate.querySelector(`#username`).value = String(data.data.username);
-                    // formUpdate.querySelector(`#lastName`).value = String(data.data.user_lastname);
-                    formUpdate.querySelector(`#email`).value = String(data.data.email);
-                    formUpdate.querySelector(`#birthday`).value = String(data.data.birthday);
-                    // Object.entries(data.data).forEach(([key, value]) => {
-                    //     formUpdate.querySelector(`#${key}`).value = String(value);
-                    // });
-                }
-            });
+<style>
+    .users-list .group,
+    .users-list .username,
+    .users-list .email {
+        justify-content: start;
     }
 
-    function sendData(method, obj, data = {}) {
-        const props = [];
-        if (obj !== null) {
-            props.push(new URLSearchParams(getData(obj)).toString());
-            if (method === 'update') {
-                props.push(new URLSearchParams({id: obj.querySelector('#id').value}).toString());
+    .users-list .birthday,
+    .users-list .created-at {
+        justify-content: end;
+    }
+</style>
+
+{# TODO list pages #}
+
+<script>
+    const form = {
+        create: document.querySelector('.users-form.create'),
+        update: document.querySelector('.users-form.update'),
+        list: document.querySelector('.users-list'),
+    };
+    const popup = {
+        create: document.querySelector('.popup.create'),
+        update: document.querySelector('.popup.update'),
+    };
+    const getData = (obj) => {
+        const request = {};
+        obj.querySelectorAll('[name]').forEach(e => {
+            if (e.disabled) {
+                return;
             }
-        }
-        if (Object.values(data).length > 0) {
-            props.push(new URLSearchParams(data).toString());
-        }
-        const url = `/users/${method}?${props.join('&')}`;
-        const error = obj?.querySelector('.error-message');
-        const button = obj?.querySelector('button');
-        !button || (button.disabled = true);
-        !error || error.classList.add('hide');
-        fetch(url)
-            .then(async res => {
-                const data = await res.json();
-                if (data.error) {
-                    throw new Error(data.error);
+            request[e.name] = e.value;
+        });
+        return request;
+    };
+    const setData = (obj, data = {}) => {
+        const items = obj.querySelectorAll('[name]');
+        items.forEach(e => {
+            const value = data[e.name];
+            if (value) {
+                e.value = data[e.name];
+            }
+        });
+    };
+    const disableInputs = (form) => {
+        form.querySelectorAll('input[type="checkbox"][data-for]')
+            .forEach(e => changeInput(form, e, false));
+        form.querySelector('.error-message')?.classList.add('hide');
+    };
+    const changeInput = (form, obj, value = false) => {
+        form.querySelector(`[name="${obj.dataset.for}"]`).disabled = !value;
+    };
+
+    fetch(`/users/get`)
+        .then(response => response.json())
+        .then(json => {
+            Object.values(form).forEach(e => {
+                const selectGroup = e.querySelector('select[name="group_id"]');
+                if (selectGroup) {
+                    json.data.groups.forEach(group => {
+                        selectGroup.insertAdjacentHTML(
+                            'beforeend',
+                            `<option value="${group.id}">${group.name}</option>`
+                        );
+                    });
                 }
-                window.location.reload();
-            })
-            .catch(err => {
-                if (error) {
-                    error.innerHTML = err.message;
-                    error.classList.remove('hide');
-                }
-            })
-            .finally(() => {
-                !button || (button.disabled = false);
             });
+        });
+
+    Object.entries(form).forEach(([name, gForm]) => {
+        disableInputs(gForm);
+        gForm.addEventListener('click', e => {
+            const errorEl = form[name].querySelector('.error-message');
+            switch (String(e.target.nodeName).toLowerCase()) {
+                case 'input':
+                    if (e.target.type === 'checkbox') {
+                        changeInput(gForm, e.target, e.target.checked);
+                    }
+                    break;
+                case 'a':
+                    if (e.target.matches('.close') && gForm.parentElement.matches('.popup')) {
+                        showPopup(name, false);
+                    }
+                    if (e.target.parentElement.matches('.control')) {
+                        e.preventDefault();
+                        const id = e.target.parentElement.dataset.id;
+                        switch (e.target.className) {
+                            case 'create':
+                                showPopup('create');
+                                break;
+                            case 'update':
+                                const buttonEl = form.update.querySelector('button');
+                                buttonEl.disabled = true;
+                                fetch(`/users/get?id=${id}`)
+                                    .then(response => response.json())
+                                    .then(json => {
+                                        if (json.error) {
+                                            errorEl.innerHTML = json.error;
+                                            errorEl.classList.remove('hide');
+                                        } else {
+                                            if (json.data.user.birthday) {
+                                                json.data.user.birthday = json.data.user.birthday.slice(0, 10);
+                                            }
+                                            setData(form.update, json.data.user);
+                                            buttonEl.disabled = false;
+                                        }
+                                    });
+                                showPopup('update');
+                                break;
+                            case 'remove':
+                                sendData('delete', {id})
+                                    .then(() => window.location.reload());
+                                break;
+                        }
+                    }
+                    break;
+                case 'button':
+                    errorEl.innerHTML = '';
+                    errorEl.classList.add('hide');
+                    const buttonEl = gForm.querySelector('button');
+                    buttonEl.disabled = true;
+                    sendData(name, getData(gForm))
+                        .then(() => window.location.reload())
+                        .catch((err) => {
+                            errorEl.innerHTML = err.message;
+                            errorEl.classList.remove('hide');
+                        })
+                        .finally(() => buttonEl.disabled = false);
+                    break;
+            }
+        });
+    });
+
+    function showPopup(type, value = true) {
+        disableInputs(form[type]);
+        value ? popup[type].classList.remove('hide') : popup[type].classList.add('hide');
+    }
+
+    async function sendData(method, data = {}) {
+        const props = new URLSearchParams(data).toString();
+        if (props.length === 0) {
+            throw new Error('Error count values');
+        }
+        const response = await fetch(`/users/${method}?${props}`);
+        if (!response.ok) {
+            throw new Error(`${response.status}: ${response.statusText}`);
+        }
+        const json = await response.json();
+        if (json.error) {
+            throw new Error(json.error);
+        }
+        return json.data;
     }
 </script>

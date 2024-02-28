@@ -1,23 +1,4 @@
-@import "vars", "clear";
-
-/* <!-- <editor-folder Mixins> --> */
-@mixin flex($direction: row, $justify: stretch, $align: stretch, $gap: 0px) {
-  display: flex;
-  flex-direction: $direction;
-  flex-wrap: wrap;
-  justify-content: $justify;
-  align-items: $align;
-  gap: $gap;
-}
-
-@mixin flexRow($justify: stretch, $align: stretch, $gap: 0px) {
-  @include flex(row, $justify, $align, $gap);
-}
-
-@mixin flexColumn($justify: stretch, $align: stretch, $gap: 0px) {
-  @include flex(column, $align, $justify, $gap);
-}
-/* <!-- </editor-folder--> */
+@import "clear";
 
 /* <!-- <editor-folder Main> --> */
 $error-color: $red-dark;
@@ -226,7 +207,7 @@ main {
     @include flexColumn(stretch, stretch, 10px);
     background: $white !important;
     padding: 20px !important;
-    border-radius: 2px !important;
+    border-radius: 3px !important;
   }
 }
 /* <!-- </editor-folder--> */
@@ -240,7 +221,7 @@ main {
     width: 100%;
     max-width: 450px;
     border: 1px solid $white-dark;
-    border-radius: 2px;
+    border-radius: 3px;
 
     .title {
       font-weight: bold;
@@ -249,6 +230,7 @@ main {
     label {
       opacity: 0.8;
       text-transform: uppercase;
+      cursor: default;
     }
 
     .error-message {
@@ -260,6 +242,11 @@ main {
     & > * {
       @include flexRow(space-between, center, 10px);
       width: 100%;
+
+      & > * {
+        @include flexRow(end, center, 10px);
+        text-transform: none !important;
+      }
     }
 
     button {
@@ -268,7 +255,7 @@ main {
   }
 
   &-list {
-    $list-columns: 5;
+    $list-columns: 6;
 
     display: grid;
     grid-template-columns: repeat($list-columns, auto);
@@ -291,18 +278,30 @@ main {
           color: $white;
           font-weight: bold;
           text-transform: uppercase;
+          min-height: 36px;
+
+          & > a {
+            @include flexRow(center, center);
+            padding: 5px 20px;
+            text-transform: none;
+            color: $white;
+            border-radius: 3px;
+            box-shadow: $white 0 0 5px -1px;
+            text-shadow: rgba(0, 0, 0, .2) 2px 2px 1px;
+            &:is(:hover,:focus){
+              background: rgba(0,0,0,.1);
+            }
+          }
         }
       }
     }
 
-    :nth-child(#{$list-columns}n - #{$list-columns - 1}) {
-      border-radius: 2px 0 0 2px;
-      justify-content: start;
+    & > :nth-child(#{$list-columns}n - #{$list-columns - 1}) {
+      border-radius: 3px 0 0 3px;
     }
 
-    :nth-child(#{$list-columns}n) {
-      border-radius: 0 2px 2px 0;
-      justify-content: end;
+    & > :nth-child(#{$list-columns}n) {
+      border-radius: 0 3px 3px 0;
     }
 
     .control {

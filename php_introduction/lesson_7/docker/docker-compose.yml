@@ -5,6 +5,8 @@ x-default: &default
     - .env
   networks:
     - app-network
+  environment:
+    TZ: ${TIMEZONE}
 x-app: &app
   <<: *default
   build:
@@ -27,6 +29,12 @@ services:
     image: myapp/php
     build:
       context: ./application
+  php-cli:
+    <<: *app
+    container_name: memcache
+    image: myapp/memcache
+    build:
+      context: ./memcache
   mysql:
     <<: *default
     container_name: database

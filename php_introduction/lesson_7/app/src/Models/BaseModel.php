@@ -7,20 +7,55 @@ use PDO;
 use Root\App\services\Database;
 use Root\App\Services\Helper;
 
+// TODO вынести в Core
+
+/**
+ * Базовая модель
+ *
+ * Добавление связей:
+ * <code>
+ *     $this->fields['propsName'] = {ModelName}::findByUnique($this->{fieldName});
+ * </code>
+ */
 abstract class BaseModel
 {
     // Settings
     public const LIMIT_ROWS = 100;
     
+    /**
+     * Название таблицы в БД
+     * @return string
+     */
     static abstract protected function getTableName(): string; // ex: "users"
     
+    /**
+     * Название уникального поля (идентификатор)
+     * @return string
+     */
     static abstract protected function getUniqueField(): string; // ex: "id"
     
+    /**
+     * Правила валидации
+     * @return array
+     */
     protected function rules(): array
     {
         return [
             // 'fieldName' => [
             //     '{{ errorMessage }}' => fn($value) => {{ logic }},
+            // ],
+        ];
+    }
+    
+    /**
+     * Правила преобразования при установке значения
+     * @return array
+     */
+    protected function setters(): array
+    {
+        return [
+            // 'fieldName' => [
+            //     fn($value) => {{ result }},
             // ],
         ];
     }
@@ -35,24 +70,18 @@ abstract class BaseModel
     public function __construct(array $props = [])
     {
         try {
-            $className = static::getClassName();
-            $columns = $this->getColumns();
-            // foreach ($columns as $key => $type) {
-            foreach ($columns as $key => $data) {
-                // $this->fields[$key] = new BaseField(
-                //     "$className->\$$key",
-                //     "$type",
-                //     $props[$key] ?? null,
-                //     $this->rules()[$key] ?? [],
-                //     $key === static::getUniqueField()
-                // );
-                $data['value'] = $props[$key] ?? null;
-                $this->fields[$key] = new BaseField(...array_values($data));
+            $className = $this::getClassName();
+            $columns = $this::getColumns();
+            $unique = $this::getUnique();
+            foreach ($columns as $name => $typeData) {
+                $this->fields[$name] = new BaseField(
+                    $className,
+                    $typeData,
+                    $props[$name] ?? null,
+                    $this::rules()[$name] ?? [],
+                    $unique,
+                );
             }
-            // echo '<pre>';
-            // print_r($this->fields);
-            // echo '</pre>';
-            // die;
         } catch (\Throwable) {
             //
         }
@@ -63,8 +92,9 @@ abstract class BaseModel
      */
     public function __get(string $name)
     {
-        $this->checkFieldExist($name);
-        return $this->fields[$name]();
+        $this->checkFieldExist($name, 'get');
+        $fieldData = $this->fields[$name];
+        return $fieldData instanceof BaseField ? $fieldData() : $fieldData;
     }
     
     /**
@@ -72,7 +102,12 @@ abstract class BaseModel
      */
     public function __set(string $name, $value): void
     {
-        $this->checkFieldExist($name);
+        $this->checkFieldExist($name, 'set');
+        if (array_key_exists($name, $this->setters())) {
+            foreach ($this->setters()[$name] as $fn) {
+                $value = $fn($value);
+            }
+        }
         $this->fields[$name]($value, true);
     }
     
@@ -82,7 +117,19 @@ abstract class BaseModel
     public function __invoke(): array
     {
         $data = [];
-        foreach (array_keys($this->getColumns()) as $column) {
+        foreach (array_keys($this::getColumns()) as $column) {
+            $data[$column] = $this->$column;
+        }
+        return $data;
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public function __debugInfo(): ?array
+    {
+        $data = [];
+        foreach (array_keys($this->fields) as $column) {
             $data[$column] = $this->$column;
         }
         return $data;
@@ -90,13 +137,17 @@ abstract class BaseModel
     
     /**
      * @param string $fieldName
+     * @param string $type
      * @return void
      * @throws Exception
      */
-    private function checkFieldExist(string $fieldName): void
+    private function checkFieldExist(string $fieldName, string $type): void
     {
-        if (!isset($this->fields[$fieldName])) {
+        if (!array_key_exists($fieldName, $this->fields)) {
             $this->error('field not exist', $fieldName);
+        }
+        if ($type === 'set' && !array_key_exists($fieldName, $this::getColumns())) {
+            $this->error('field not writable', $fieldName);
         }
     }
     
@@ -105,9 +156,9 @@ abstract class BaseModel
      */
     private function error(string $errorMessage, string $fieldName = null)
     {
-        $className = static::getClassName();
+        $className = $this::getClassName();
         $fullName = !empty($fieldName) ? "$className->\$$fieldName" : $className;
-        throw new Exception("Error $fullName (field not exist)");
+        throw new Exception("Error $fullName ($errorMessage)");
     }
     
     /**
@@ -115,8 +166,8 @@ abstract class BaseModel
      */
     public function exist(): bool
     {
-        $table = static::getTable();
-        $unique = static::getUnique();
+        $table = $this::getTable();
+        $unique = $this::getUnique();
         if (!empty($value = $this->$unique)) {
             $handler = Database::app()->prepare("select count($unique) from $table where $unique=:value");
             $handler->execute(['value' => $value]);
@@ -144,23 +195,29 @@ abstract class BaseModel
         if ($exist) {
             $this->error('record exist');
         }
-        $table = static::getTable();
-        $unique = static::getUnique();
+        $table = $this::getTable();
+        $unique = $this::getUnique();
         $data = [];
-        foreach ($this() as $key => $value) {
-            if (in_array($key, [$unique, 'created_at', 'updated_at']) && empty($value)) {
+        foreach ($this() as $dataKey => $dataValue) {
+            if (in_array($dataKey, [$unique, 'created_at', 'updated_at']) && empty($dataValue)) {
                 continue;
             }
-            $this->fields[$key]->validate();
-            $data["`$key`"] = gettype($value) === 'string' ? "\"$value\"" : ($value === null ? 'null' : $value);
+            try {
+                $this->checkFieldExist($dataKey, 'set');
+            } catch (\Throwable) {
+                continue;
+            }
+            $this->fields[$dataKey]->validate();
+            if (gettype($dataValue) === 'string') {
+                $dataValue = "\"$dataValue\"";
+            } else if ($dataValue === null) {
+                $dataValue = 'null';
+            }
+            $data["`$dataKey`"] = $dataValue;
         }
         $keys = implode(', ', array_keys($data));
         $values = implode(', ', array_values($data));
         $handler = Database::app()->prepare("insert into $table($keys) values($values)");
-        // echo '<pre>';
-        // print_r($handler);
-        // echo '</pre>';
-        // die;
         return $handler->execute();
     }
     
@@ -175,8 +232,8 @@ abstract class BaseModel
         if (!$exist) {
             $this->error('record not exist');
         }
-        $table = static::getTable();
-        $unique = static::getUnique();
+        $table = $this::getTable();
+        $unique = $this::getUnique();
         if (empty($value = $this->$unique)) {
             $this->error('empty field', $unique);
         }
@@ -185,8 +242,18 @@ abstract class BaseModel
             if ($dataKey === $unique || (in_array($dataKey, ['created_at', 'updated_at']) && empty($value))) {
                 continue;
             }
+            try {
+                $this->checkFieldExist($dataKey, 'set');
+            } catch (\Throwable) {
+                continue;
+            }
             $this->fields[$dataKey]->validate();
-            $data[] = "`$dataKey` = " . (gettype($dataValue) === 'string' ? "\"$dataValue\"" : $dataValue);
+            if (gettype($dataValue) === 'string') {
+                $dataValue = "\"$dataValue\"";
+            } else if ($dataValue === null) {
+                $dataValue = 'null';
+            }
+            $data[] = "`$dataKey` = $dataValue";
         }
         $data = implode(', ', $data);
         $handler = Database::app()->prepare("update $table set $data where $unique=:value");
@@ -198,8 +265,8 @@ abstract class BaseModel
      */
     public function delete(): bool
     {
-        $table = static::getTable();
-        $unique = static::getUnique();
+        $table = $this::getTable();
+        $unique = $this::getUnique();
         if (empty($value = $this->$unique)) {
             $this->error('empty field', $unique);
         }
@@ -246,6 +313,37 @@ abstract class BaseModel
     }
     
     /**
+     * @param array $fields
+     * @param bool $once
+     * @return static[]|static|null
+     * @throws Exception
+     */
+    static public function find(array $fields, bool $once = false): array|static|null
+    {
+        $table = static::getTable();
+        
+        $where = [];
+        $props = [];
+        foreach ($fields as $key => $value) {
+            $where[$key] = "$key=:$key";
+            $props[$key] = $value;
+        }
+        $where = implode(' && ', $where);
+        
+        $rows = [];
+        $handler = Database::app()->prepare("select * from $table where $where");
+        if ($handler->execute($props)) {
+            $items = $handler->fetchAll(PDO::FETCH_ASSOC);
+            if (is_array($items)) {
+                foreach ($items as $data) {
+                    $rows[] = new static($data);
+                }
+            }
+        }
+        return $once ? ($rows[0] ?? null) : $rows;
+    }
+    
+    /**
      * @param int $page
      * @param int $limit
      * @return static[]
@@ -271,62 +369,21 @@ abstract class BaseModel
     
     
     // Service
-    static protected ?array $columns = null;
-    static protected ?string $uniqueField = null;
-    static private array $typeMap = [
-        'bool' => [ // boolean
-            'BOOL',
-            'BOOLEAN',
-        ],
-        'int' => [ // integer
-            'INT',
-            'INTEGER',
-            'TINYINT',
-            'SMALLINT',
-            'MEDIUMINT',
-            'BIGINT',
-        ],
-        'float' => [
-            'FLOAT'
-        ],
-        'double' => [
-            'DOUBLE',
-            'DOUBLE PRECISION',
-            'DECIMAL',
-            'DEC',
-        ],
-        'string' => [
-            'CHAR',
-            'VARCHAR',
-            'TEXT',
-            'TINYTEXT',
-            'MEDIUMTEXT',
-            'LONGTEXT',
-            'DATE',
-            'DATETIME',
-            'TIMESTAMP',
-            'TIME',
-            'YEAR',
-        ],
-        'array' => [],
-        'object' => [],
-        'null' => [],
-    ];
-    static private ?array $typeMapSqlToPhp = null;
+    static private array $columns = [];
     
-    static public function getClassName(): string
+    static private function getClassName(): string
     {
         return (string)preg_replace(
             "#" . addslashes(Helper::getRootNamespace()) . "\\\#i",
             '',
-            get_called_class()
+            static::class
         );
     }
     
     /**
      * @throws Exception
      */
-    static public function getTable(): string
+    static private function getTable(): string
     {
         if (!($table = static::getTableName())) {
             $className = static::getClassName();
@@ -338,9 +395,10 @@ abstract class BaseModel
     /**
      * @throws Exception
      */
-    static public function getUnique(): string
+    static private function getUnique(): string
     {
-        if (!($unique = static::getUniqueField() ?? static::$uniqueField)) {
+        $unique = static::getUniqueField();
+        if (!$unique) {
             $className = static::getClassName();
             throw new Exception("Error $className (unique field not specified)");
         }
@@ -351,65 +409,17 @@ abstract class BaseModel
      * @return array
      * @throws Exception
      */
-    private function getColumns(): array
+    static private function getColumns(): array
     {
-        $fields = &static::$columns;
-        if ($fields === null) {
-            // set map: sqlType => phpType
-            $types = &self::$typeMapSqlToPhp;
-            if ($types === null) {
-                foreach (self::$typeMap as $phpType => $sqlTypes) {
-                    foreach ($sqlTypes as $sqlType) {
-                        $types[strtolower($sqlType)] = strtolower($phpType);
-                    }
-                }
-            }
-            
-            // set fields
+        @$fields = &self::$columns[static::class];
+        if (empty($fields)) {
+            $fields = [];
             $table = static::getTable();
             $handler = Database::app()->prepare("show columns from " . $table);
             if ($handler->execute()) {
-                $uniqueField = &static::$uniqueField;
-                $fields = [];
                 foreach ($handler->fetchAll(PDO::FETCH_ASSOC) as $item) {
-                    preg_match("#([^\(]+)(\((.+)\))?#i", $item['Type'], $typeData);
-                    // [$typeName, $length] = explode(
-                    //     ',',
-                    //     preg_replace(
-                    //         "#(.*)\((.*)\)#i",
-                    //         "$1,$2",
-                    //         $item['Type']
-                    //     )
-                    // );
-                    @[,$typeName,,$length] = $typeData;
-                    // echo '<pre>ITEM:';
-                    // print_r([
-                    //     'item' => $item,
-                    //     'type' => $typeName,
-                    //     'typeData' => $typeData,
-                    // ]);
-                    // echo '</pre>';
-                    if ($type = $types[strtolower($typeName)] ?? null) {
-                        // if ($item['Key'] === 'PRI' && $item['Extra'] = 'auto_increment' && $uniqueField === null) {
-                        //     $uniqueField = $item['Field'];
-                        // }
-                        // $fields[$item['Field']] = $type;
-                        $fieldName = $item['Field'];
-                        $isPrimary = $item['Key'] === 'PRI';
-                        $isNull = $item['Null'] === 'YES';
-                        if ($isPrimary && $item['Extra'] = 'auto_increment' && $uniqueField === null) {
-                            $uniqueField = $item['Field'];
-                        }
-                        $fields[$fieldName] = [
-                            'fullName' => static::getClassName() . "->\$$fieldName",
-                            'type' => $type,
-                            'value' => null,
-                            'length' => $length ?? 0,
-                            'rules' => static::rules()[$fieldName] ?? [],
-                            'isPrimary' => $isPrimary,
-                            'isNull' => $isNull,
-                        ];
-                    }
+                    $fieldName = $item['Field'];
+                    $fields[$fieldName] = $item;
                 }
             }
         }
