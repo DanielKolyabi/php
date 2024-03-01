@@ -1,0 +1,344 @@
+<h1>Список пользователей</h1>
+
+<div class="users-form profile">
+    {% if not(userData) %}
+        <h2>Авторизация</h2>
+        <label>
+            <span>username:</span>
+            <input type="text" name="username">
+        </label>
+        <label>
+            <span>password:</span>
+            <input type="password" name="password">
+        </label>
+        <div>
+            <span></span>
+            <label>
+                <span>remember me</span>
+                <input type="checkbox" name="remember">
+            </label>
+        </div>
+        <div class="error-message hide"></div>
+        <button class="auth">Login</button>
+    {% else %}
+        <h2>Добро пожаловать {{ userData.user.username }}</h2>
+        <label>
+            group
+            <span>{{ userData.group.name }}</span>
+        </label>
+        <label>
+            email
+            <span>{{ userData.user.email }}</span>
+        </label>
+        <label>
+            birthday
+            <span>{{ userData.user.birthday|date('d.m.Y', 'Europe/Moscow') }}</span>
+        </label>
+        <label>
+            created
+            <span>{{ userData.user.birthdaycreated_at|date('H:i d.m.Y', 'Europe/Moscow') }}</span>
+        </label>
+        <div class="error-message hide"></div>
+        <button class="logout">Logout</button>
+    {% endif %}
+</div>
+
+<script>
+    const profileEl = document.querySelector('.profile');
+    const profileErr = profileEl.querySelector('.error-message');
+    profileEl.addEventListener('click', ({target}) => {
+        if (target.nodeName.toLowerCase() !== 'button') {
+            return;
+        }
+        profileErr.innerHTML = '';
+        profileErr.classList.add('hide');
+        const data = {};
+        switch (target.className) {
+            case 'auth':
+                data.username = profileEl.querySelector('[name="username"]').value;
+                data.password = profileEl.querySelector('[name="password"]').value;
+                data.remember = profileEl.querySelector('[name="remember"]').checked;
+                break;
+            case 'logout':
+                break;
+        }
+        target.disabled = true;
+        sendProfile(target.className, data)
+            .then(() => window.location.reload())
+            .catch(err => {
+                profileErr.innerHTML = err.message;
+                profileErr.classList.remove('hide');
+                if (err.code <= 200) {
+                    window.location.reload();
+                }
+            })
+            .finally(() => target.disabled = false);
+    });
+    async function sendProfile(method, data = {}) {
+        const response = await fetch(`/user/${method}`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: new URLSearchParams(data).toString(),
+        });
+        const json = await response.json();
+        if (json.error) {
+            throw new Error(json.error.message);
+        }
+        return json.data;
+    }
+</script>
+
+<div class="popup create hide">
+    <div class="users-form create">
+        <div class="title">
+            Create new user
+            <a class="close" href="#"></a>
+        </div>
+        <label>
+            <span>group</span>
+            <select name="group_id"></select>
+        </label>
+        <label>
+            <span>* username</span>
+            <input type="text" name="username">
+        </label>
+        <label>
+            <span>* password</span>
+            <input type="password" name="password">
+        </label>
+        <label>
+            <span>* email</span>
+            <input type="email" name="email">
+        </label>
+        <label>
+            <span>birthday</span>
+            <input type="date" name="birthday">
+        </label>
+        <div class="error-message hide"></div>
+        <button>Create</button>
+    </div>
+</div>
+
+<div class="popup update hide">
+    <div class="users-form update">
+        <div class="title">
+            <span>Update user</span>
+            <a class="close" href="#"></a>
+        </div>
+        <input type="hidden" name="id">
+        <label>
+            <span>username</span>
+            <input type="text" name="username" disabled>
+        </label>
+        <label>
+            <span>group</span>
+            <select name="group_id"></select>
+        </label>
+        <label>
+            <span>password</span>
+            <input type="password" name="password">
+        </label>
+        <div>
+            <span></span>
+            <label>
+                <span>change password</span>
+                <input type="checkbox" data-for="password">
+            </label>
+        </div>
+        <label>
+            <span>* email</span>
+            <input type="email" name="email">
+        </label>
+        <label>
+            <span>birthday</span>
+            <input type="date" name="birthday">
+        </label>
+        <div class="error-message hide"></div>
+        <button>Save</button>
+    </div>
+</div>
+
+<div class="users-list">
+    <div class="group">group</div>
+    <div class="username">username</div>
+    <div class="email">email</div>
+    <div class="birthday">birthday</div>
+    <div class="created-at">created at</div>
+    <div class="control"><a href="#" class="create">New user +</a></div>
+    {% for user in data %}
+        <div class="group">{{ user.group }}</div>
+        <div class="username">{{ user.username }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="birthday">
+            {% if user.birthday %}
+                {{ user.birthday | date('d.m.Y') }}
+            {% else %}
+                не указано
+            {% endif %}
+        </div>
+        <div class="created-at">{{ user.created_at | date('d.m.Y') }}</a></div>
+        <div class="control" data-id="{{ user.id }}">
+            <a class="update" href="#">update</a>
+            <a class="remove" href="#">remove</a>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+    .users-list .group,
+    .users-list .username,
+    .users-list .email {
+        justify-content: start;
+    }
+
+    .users-list .birthday,
+    .users-list .created-at {
+        justify-content: end;
+    }
+</style>
+
+{# TODO list pages #}
+
+<script>
+    const form = {
+        create: document.querySelector('.users-form.create'),
+        update: document.querySelector('.users-form.update'),
+        list: document.querySelector('.users-list'),
+    };
+    const popup = {
+        create: document.querySelector('.popup.create'),
+        update: document.querySelector('.popup.update'),
+    };
+    const getData = (obj) => {
+        const request = {};
+        obj.querySelectorAll('[name]').forEach(e => {
+            if (e.disabled) {
+                return;
+            }
+            request[e.name] = e.value;
+        });
+        return request;
+    };
+    const setData = (obj, data = {}) => {
+        const items = obj.querySelectorAll('[name]');
+        items.forEach(e => {
+            const value = data[e.name];
+            if (value) {
+                e.value = data[e.name];
+            }
+        });
+    };
+    const disableInputs = (form) => {
+        form.querySelectorAll('input[type="checkbox"][data-for]')
+            .forEach(e => changeInput(form, e, false));
+        form.querySelector('.error-message')?.classList.add('hide');
+    };
+    const changeInput = (form, obj, value = false) => {
+        form.querySelector(`[name="${obj.dataset.for}"]`).disabled = !value;
+    };
+
+    fetch(`/users/get`)
+        .then(response => response.json())
+        .then(json => {
+            if (json.error) {
+                throw new Error(json.error.message);
+            }
+            Object.values(form).forEach(e => {
+                const selectGroup = e.querySelector('select[name="group_id"]');
+                if (selectGroup) {
+                    json.data.groups.forEach(group => {
+                        selectGroup.insertAdjacentHTML(
+                            'beforeend',
+                            `<option value="${group.id}">${group.name}</option>`
+                        );
+                    });
+                }
+            });
+        });
+
+    Object.entries(form).forEach(([name, gForm]) => {
+        disableInputs(gForm);
+        gForm.addEventListener('click', e => {
+            switch (String(e.target.nodeName).toLowerCase()) {
+                case 'input':
+                    if (e.target.type === 'checkbox') {
+                        changeInput(gForm, e.target, e.target.checked);
+                    }
+                    break;
+                case 'a':
+                    if (e.target.matches('.close') && gForm.parentElement.matches('.popup')) {
+                        showPopup(name, false);
+                    }
+                    if (e.target.parentElement.matches('.control')) {
+                        e.preventDefault();
+                        const id = e.target.parentElement.dataset.id;
+                        switch (e.target.className) {
+                            case 'create':
+                                showPopup('create');
+                                break;
+                            case 'update':
+                                const buttonEl = form.update.querySelector('button');
+                                buttonEl.disabled = true;
+                                fetch(`/users/get?id=${id}`)
+                                    .then(response => response.json())
+                                    .then(json => {
+                                        if (json.error) {
+                                            const errorEl = form[e.target.className].querySelector('.error-message');
+                                            errorEl.innerHTML = json.error.message;
+                                            errorEl.classList.remove('hide');
+                                        } else {
+                                            if (json.data.user.birthday) {
+                                                json.data.user.birthday = json.data.user.birthday.slice(0, 10);
+                                            }
+                                            setData(form.update, json.data.user);
+                                            buttonEl.disabled = false;
+                                        }
+                                    });
+                                showPopup('update');
+                                break;
+                            case 'remove':
+                                sendData('delete', {id})
+                                    .then(() => window.location.reload());
+                                break;
+                        }
+                    }
+                    break;
+                case 'button':
+                    const errorEl = form[name].querySelector('.error-message');
+                    errorEl.innerHTML = '';
+                    errorEl.classList.add('hide');
+                    const buttonEl = gForm.querySelector('button');
+                    buttonEl.disabled = true;
+                    sendData(name, getData(gForm))
+                        .then(() => window.location.reload())
+                        .catch((err) => {
+                            errorEl.innerHTML = err.message;
+                            errorEl.classList.remove('hide');
+                        })
+                        .finally(() => buttonEl.disabled = false);
+                    break;
+            }
+        });
+    });
+
+    function showPopup(type, value = true) {
+        disableInputs(form[type]);
+        value ? popup[type].classList.remove('hide') : popup[type].classList.add('hide');
+    }
+
+    async function sendData(method, data = {}) {
+        const props = new URLSearchParams(data).toString();
+        if (props.length === 0) {
+            throw new Error('Error count values');
+        }
+        const response = await fetch(`/users/${method}?${props}`);
+        if (!response.ok) {
+            throw new Error(`${response.status}: ${response.statusText}`);
+        }
+        const json = await response.json();
+        if (json.error) {
+            throw new Error(json.error.message);
+        }
+        return json.data;
+    }
+</script>

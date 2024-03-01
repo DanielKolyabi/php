@@ -1,0 +1,60 @@
+<h1>Информация о нас</h1>
+<ul class="info">
+    <li>Наш телефон: {{ phone }}</li>
+    <li>Наш адрес: {{ address }}</li>
+    <li>Расписание работы: <ul class="schedule"></ul></li>
+</ul>
+<style>
+    .info {
+        font-family: monospace;
+    }
+    .schedule .active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+</style>
+<script defer>
+    const scheduleEl = document.querySelector('.schedule');
+    const schedule = {
+        'пн': '{{ workHours['пн'] }}',
+        'вт': '{{ workHours['вт'] }}',
+        'ср': '{{ workHours['ср'] }}',
+        'чт': '{{ workHours['чт'] }}',
+        'пт': '{{ workHours['пт'] }}',
+        'сб': '{{ workHours['сб'] }}',
+        'вс': '{{ workHours['вс'] }}',
+    };
+    const timeEl = new Intl.DateTimeFormat('ru-RU', {
+        timeZone: '{{ timeZone }}',
+        timeZoneName: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        weekday: 'short',
+    });
+    setSchedule();
+    setInterval(() => setSchedule(), 60000);
+    function setSchedule() {
+        scheduleEl.innerHTML = '';
+        const [dayS, timeS] = timeEl.format(Date.now()).split(', ');
+        const tz = timeS.split(' ')[1];
+        Object.entries(schedule).forEach(([day, time]) => {
+            let status = '';
+            const now = day === dayS;
+            if (now) {
+                let [open, close] = time.split(' - ');
+                if (open && close) {
+                    const times = {
+                        open: Date.parse(`2000-01-01 ${open} ${tz}`),
+                        close: Date.parse(`2000-01-01 ${close} ${tz}`),
+                        now: Date.parse(`2000-01-01 ${timeS}`),
+                    };
+                    status = ` (${times.open <= times.now && times.now < times.close ? 'открыто' : 'закрыто'})`;
+                }
+                scheduleEl.insertAdjacentHTML('beforeend', `<li class="active">${day}: ${time}${status}</li>`);
+            } else {
+                scheduleEl.insertAdjacentHTML('beforeend', `<li>${day}: ${time}</li>`);
+            }
+        });
+    }
+</script>
