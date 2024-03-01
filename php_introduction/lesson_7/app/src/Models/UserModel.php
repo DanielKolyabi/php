@@ -44,9 +44,24 @@ final class UserModel extends BaseModel
         return 'id';
     }
     
+    /**
+     * @return object{
+     *     password: string,
+     *     email: string,
+     *     date: string,
+     * }
+     */
+    static protected function regEx(): object
+    {
+        return (object)[
+            'password' => '#(?=.*\d+)(?=.*[a-z]+)(?=.*[A-Z]+)(?=.*[^\s\w])(^\S{8,20})#i',
+            'email' => '#[^@]{2,}@[^.]{2,}\.[\w^_]{2,}#i',
+            'date' => '#\d{4}-(\d{2}-?){2}#i',
+        ];
+    }
+    
     static protected function rules(): array
     {
-        $passPattern = '#(?=.*\d+)(?=.*[a-z]+)(?=.*[A-Z]+)(?=.*[^\s\w])(^\S{8,20})#is';
         return [
             'username' => [
                 'require' => true,
@@ -57,7 +72,7 @@ final class UserModel extends BaseModel
                 'require' => true,
                 'empty' => fn($value) => !empty($value),
                 'length < 8' => fn($value) => strlen($value) >= 8,
-                'incorrect' => fn($value) => preg_match($passPattern, $value) !== false,
+                'incorrect' => fn($value) => (bool)preg_match(self::regEx()->password, $value),
             ],
             'group_id' => [
                 'require' => true,
@@ -67,12 +82,10 @@ final class UserModel extends BaseModel
                 'require' => true,
                 'empty' => fn($value) => !empty($value),
                 'length < 2' => fn($value) => strlen($value) >= 2,
-                // TODO ПОЧИНИТЬ ВАЛИДАЦИЮ
-                'incorrect' => fn($value) => preg_match('#([^@]{2,})@([^.]{2,})\.(.{2,})#is', $value) !== false,
+                'incorrect' => fn($value) => (bool)preg_match(self::regEx()->email, $value),
             ],
             'birthday' => [
-                // 'incorrect' => fn($value) => preg_match('#[0-9]{2}-[0-9]{2}-[0-9]{4}#is', $value) !== false,
-                'incorrect' => fn($value) => preg_match('#\d{4}-(\d{2}-?){2}#i', $value) !== false,
+                'incorrect' => fn($value) => (bool)preg_match(self::regEx()->date, $value),
                 'min date 01.01.1900' => fn($value) => strtotime($value) >= strtotime('1900-01-01'),
                 'max date 31.12.2900' => fn($value) => strtotime($value) <= strtotime('2900-12-31'),
             ],

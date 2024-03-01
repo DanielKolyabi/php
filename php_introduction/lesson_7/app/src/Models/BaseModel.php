@@ -42,7 +42,8 @@ abstract class BaseModel
     {
         return [
             // 'fieldName' => [
-            //     '{{ errorMessage }}' => fn($value) => {{ logic }},
+            //     '{{ errorMessage }}' => fn($value) => '{{ logic }}',
+            //     '{{ errorMessage }}' => fn($value) => (bool)preg_match('#{{ pattern }}#i', $value),
             // ],
         ];
     }
@@ -121,18 +122,14 @@ abstract class BaseModel
      */
     public function __set(string $name, $value): void
     {
-        // TODO ПОЧИНИТЬ ВАЛИДАЦИЮ
         $this->checkFieldExist($name, 'set');
-        // echo '<pre>';
-        // print_r(['name' => $name, 'value' => $value]);
-        // echo '</pre>';
-        // if (array_key_exists($name, $this::setters())) {
-        //     foreach ($this::setters()[$name] as $fn) {
-        //         $value = $fn($value);
-        //     }
-        // }
-        // $this->fields[$name]($value, true);
-        $this->fields[$name]($this::setter($name, $value), true);
+        $this->fields[$name]($value, true);
+        // setters
+        if (array_key_exists($name, $this::setters())) {
+            foreach ($this::setters()[$name] as $fn) {
+                $this->fields[$name]($fn($value), false);
+            }
+        }
     }
     
     /**

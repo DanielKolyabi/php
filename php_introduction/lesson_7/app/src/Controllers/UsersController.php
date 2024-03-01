@@ -114,9 +114,6 @@ class UsersController extends BaseController
             foreach ($get as $key => $value) {
                 $user->$key = $value;
             }
-            // echo '<pre>';
-            // print_r($user);
-            // echo '</pre>';
             return $this->response($user && $user->update());
         } catch (\Throwable $e) {
             return $this->response(null, $e);

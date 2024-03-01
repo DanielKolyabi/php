@@ -167,16 +167,9 @@ final class BaseField
         unset($func['require']);
         if ($isRequire || !empty($this->value)) {
             foreach ($func as $errorMessage => $fn) {
-                if (!($result = $fn($this->value))) {
-                    // TODO ПОЧИНИТЬ ВАЛИДАЦИЮ
-                    // echo '<pre>';
-                    // print_r([$errorMessage => 'ERROR']);
-                    // echo '</pre>';
+                if (!$fn($this->value)) {
                     $this->error($errorMessage);
                 }
-                // echo '<pre>';
-                // print_r([$errorMessage => !$result]);
-                // echo '</pre>';
             }
         }
         return true;
