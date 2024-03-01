@@ -22,7 +22,7 @@ final class GroupModel extends BaseModel
         return 'id';
     }
     
-    protected function rules(): array
+    static protected function rules(): array
     {
         return [
             'name' => [

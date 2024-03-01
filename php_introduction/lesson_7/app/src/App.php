@@ -1,26 +1,30 @@
 <?php
 
-namespace Root\App;
-
-use app\models\UserModel;
 use HttpSoft\Response\HtmlResponse;
-use Root\App\services\Helper;
-use Root\App\services\Render;
+use Root\App\Controllers\UserController;
+use Root\App\Services\Helper;
+use Root\App\Services\Render;
 
-class App
+final class App
 {
-    static protected App $app;
-    public UserModel $user;
+    static protected self $app;
+    /** @var UserController */
+    public UserController $user;
+    
+    public static function app(): App
+    {
+        return self::$app ?? new self();
+    }
+    
+    public function __construct()
+    {
+        $this::$app = &$this;
+        $this->user = new UserController();
+    }
     
     public function run(): string
     {
         try {
-            session_start();
-            // if (empty($_SESSION['authHash']) && !empty($_COOKIE['authHash'])) {
-            //     $_SESSION['authHash'] = $_COOKIE['authHash'];
-            // }
-            $this::$app = &$this;
-            
             $uri = urldecode($_SERVER['REQUEST_URI']);
             $query = urldecode($_SERVER['QUERY_STRING']);
             $address = rtrim(!empty($query) ? str_replace($query, '', $uri) : $uri, '?');

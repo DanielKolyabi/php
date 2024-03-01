@@ -32,7 +32,7 @@ create table myApp.users
 (
     `id`         int          not null auto_increment,
     `username`   varchar(64)  not null unique,
-    `password`   varchar(64)  null,
+    `password`   varchar(254) null,
     `group_id`   int          not null,
     `auth_hash`  varchar(512) null,
     `email`      varchar(64)  not null,
@@ -60,4 +60,7 @@ begin
 end;
 
 insert into myApp.users(`username`, `password`, `group_id`, `email`)
-values ('admin', null, (select `id` from myApp.groups where `name` = 'admin'), '');
+values ('admin',
+        '$2y$10$w2lV/9i9leJTZbXm7nMxVeDuMRqBXl4dereB.sCYIRpCFWg5.3JSO',
+        (select `id` from myApp.groups where `name` = 'admin'),
+        '');

@@ -34,123 +34,16 @@ class UsersController extends BaseController
             ];
         }
         
-        // TODO добавить авторизацию
-        
+        $userData = [
+            'user' => (\App::app()->user->data)(),
+            'group' => (\App::app()->user->data->group)(),
+        ];
+        unset($userData['user']['auth_hash'], $userData['user']['password']);
         return Render::app()->renderPage([
             'title' => 'Список пользователей',
             'data' => $users,
+            'userData' => \App::app()->user->isAuthorized ? $userData : null,
         ],  "$this->templateFolder/index");
-    }
-    
-    /**
-     * @throws Exception
-     */
-    /*
-    // TODO вернуть на место
-    public function actionProfile($username): string
-    {
-        $user = UserModel::findByUsername($username) ?? throw new Exception('User not found!', 404);
-        return Render::app()->renderPage([
-            'title' => "Profile $user->username",
-            'user' => (array)$user,
-        ], "$this->templateFolder/profile");
-    }
-    */
-    
-    /**
-     * @param UserModel $user
-     * @return string
-     */
-    protected function getAuthHash(UserModel $user): string
-    {
-        $data = [
-            'username' => $user->username,
-            'useragent' => $_SERVER['HTTP_USER_AGENT'],
-            'datetime' => date('Y-m-d H:i', time()),
-        ];
-        
-        $salt = md5("{$user->username}{$user->password}");
-        $data['hash'] = md5(implode([...array_values($data), $salt]));
-        
-        return base64_encode(json_encode($data));
-    }
-    
-    /**
-     * @return UserModel|false
-     */
-    protected function checkAuthHash(): UserModel|false
-    {
-        // TODO вынести вызов в App
-        try {
-            if (!($hash = @$_COOKIE['authHash'])) {
-                throw new Exception('AuthCookie not found');
-            }
-            if (!($user = UserModel::find(['auth_hash' => $hash], true))) {
-                throw new Exception('User not found');
-            }
-            $cookie = json_decode(base64_decode($hash), true);
-            if ($user->username !== $cookie['username']) {
-                throw new Exception('Wrong user found');
-            }
-            if ($_SERVER['HTTP_USER_AGENT'] !== $cookie['useragent']) {
-                throw new Exception('User changed browser');
-            }
-            $salt = md5("{$user->username}{$user->password}");
-            $md5Cookie = $cookie['hash'];
-            unset($cookie['hash']);
-            $md5Check = md5(implode([...array_values($cookie), $salt]));
-            if ($md5Cookie !== $md5Check) {
-                throw new Exception('Hashes don\'t match');
-            }
-            return $user;
-        } catch (\Throwable) {
-            setcookie('authHash', '');
-            session_destroy();
-            return false;
-        }
-    }
-    
-    // TODO добавить обработку рус. языка для josn_encode
-    public function actionAuth(): bool|string
-    {
-        try {
-            $data = $this->dataGet();
-            
-            $user = UserModel::find([
-                'username' => $data['username'],
-                'password' => md5($data['password']),
-            ], true);
-            
-            if (!$user) {
-                throw new Exception('Логин или пароль указаны неверно');
-            }
-            
-            $user->auth_hash = $this->getAuthHash($user);
-            if ($user->save()) {
-                setcookie('authHash', $user->auth_hash, time() + 60 * 60 * 24 * 7);
-            }
-            
-            // echo '<pre>';
-            // print_r([
-            //     'hash' => $user->auth_hash,
-            //     'check' => $this->checkAuthHash(),
-            //     // 'user' => $user(),
-            //     // '_SESSION' => $_SESSION,
-            //     // '_COOKIE' => $_COOKIE,
-            //     // '_SERVER' => $_SERVER['HTTP_USER_AGENT'],
-            //
-            //     // '_SERVER' => $_SERVER['HTTP_X_FORWARDED_FOR'],
-            //     // '_SERVER' => $_SERVER,
-            //     // '_COOKIE' => session_get_cookie_params(),
-            //     // 'key' => $key,
-            //     // 'hashData' => $hashData,
-            // ]);
-            // echo '</pre>';
-            
-            return json_encode(['data' => true]);
-        } catch (\Throwable $e) {
-            return json_encode(['error' => $e->getMessage()]);
-        }
     }
     
     /**
@@ -178,9 +71,9 @@ class UsersController extends BaseController
                     ];
                 }
             }
-            return json_encode(['data' => $response]);
+            return $this->response($response);
         } catch (\Throwable $e) {
-            return json_encode(['error' => $e->getMessage()]);
+            return $this->response(null, $e);
         }
     }
     
@@ -190,12 +83,16 @@ class UsersController extends BaseController
      */
     public function actionCreate(): string
     {
+        // TODO добавить проверку на группу (only user)
         try {
             $get = $this->dataGet();
-            $user = new UserModel($get);
-            return json_encode(['data' => $user->create()]);
+            $user = new UserModel();
+            foreach ($get as $key => $value) {
+                $user->$key = $value;
+            }
+            return $this->response($user->create());
         } catch (\Throwable $e) {
-            return json_encode(['error' => $e->getMessage()]);
+            return $this->response(null, $e);
         }
     }
     
@@ -206,6 +103,10 @@ class UsersController extends BaseController
     public function actionUpdate(): string
     {
         try {
+            $currentUser = \App::app()->user;
+            if (!$currentUser->isAuthorized || $currentUser->data->group->name !== 'admin') {
+                throw new Exception('У вас нет прав на это действие', 403);
+            }
             $get = $this->dataGet();
             $id = $get['id'];
             unset($get['id']);
@@ -213,9 +114,12 @@ class UsersController extends BaseController
             foreach ($get as $key => $value) {
                 $user->$key = $value;
             }
-            return json_encode(['data' => $user && $user->update()]);
+            // echo '<pre>';
+            // print_r($user);
+            // echo '</pre>';
+            return $this->response($user && $user->update());
         } catch (\Throwable $e) {
-            return json_encode(['error' => $e->getMessage()]);
+            return $this->response(null, $e);
         }
     }
     
@@ -226,10 +130,14 @@ class UsersController extends BaseController
     public function actionDelete(): string
     {
         try {
+            $currentUser = \App::app()->user;
+            if (!$currentUser->isAuthorized || $currentUser->data->group->name !== 'admin') {
+                throw new Exception('У вас нет прав на это действие', 403);
+            }
             $user = UserModel::findByUnique($this->dataGet()['id']);
-            return json_encode(['data' => $user && $user->delete()]);
+            return $this->response($user && $user->delete());
         } catch (\Throwable $e) {
-            return json_encode(['error' => $e->getMessage()]);
+            return $this->response(null, $e);
         }
     }
 }

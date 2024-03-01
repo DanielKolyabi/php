@@ -1,5 +1,93 @@
 <h1>Список пользователей</h1>
 
+<div class="users-form profile">
+    {% if not(userData) %}
+        <h2>Авторизация</h2>
+        <label>
+            <span>username:</span>
+            <input type="text" name="username">
+        </label>
+        <label>
+            <span>password:</span>
+            <input type="password" name="password">
+        </label>
+        <div>
+            <span></span>
+            <label>
+                <span>remember me</span>
+                <input type="checkbox" name="remember">
+            </label>
+        </div>
+        <div class="error-message hide"></div>
+        <button class="auth">Login</button>
+    {% else %}
+        <h2>Добро пожаловать {{ userData.user.username }}</h2>
+        <label>
+            group
+            <span>{{ userData.group.name }}</span>
+        </label>
+        <label>
+            email
+            <span>{{ userData.user.email }}</span>
+        </label>
+        <label>
+            birthday
+            <span>{{ userData.user.birthday|date('d.m.Y', 'Europe/Moscow') }}</span>
+        </label>
+        <label>
+            created
+            <span>{{ userData.user.birthdaycreated_at|date('H:i d.m.Y', 'Europe/Moscow') }}</span>
+        </label>
+        <div class="error-message hide"></div>
+        <button class="logout">Logout</button>
+    {% endif %}
+</div>
+
+<script>
+    const profileEl = document.querySelector('.profile');
+    const profileErr = profileEl.querySelector('.error-message');
+    profileEl.addEventListener('click', ({target}) => {
+        if (target.nodeName.toLowerCase() !== 'button') {
+            return;
+        }
+        profileErr.innerHTML = '';
+        profileErr.classList.add('hide');
+        const data = {};
+        switch (target.className) {
+            case 'auth':
+                data.username = profileEl.querySelector('[name="username"]').value;
+                data.password = profileEl.querySelector('[name="password"]').value;
+                data.remember = profileEl.querySelector('[name="remember"]').checked;
+                break;
+            case 'logout':
+                break;
+        }
+        target.disabled = true;
+        sendProfile(target.className, data)
+            .then(() => window.location.reload())
+            .catch(err => {
+                profileErr.innerHTML = err.message;
+                profileErr.classList.remove('hide');
+                if (err.code <= 200) {
+                    window.location.reload();
+                }
+            })
+            .finally(() => target.disabled = false);
+    });
+    async function sendProfile(method, data = {}) {
+        const response = await fetch(`/user/${method}`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: new URLSearchParams(data).toString(),
+        });
+        const json = await response.json();
+        if (json.error) {
+            throw new Error(json.error.message);
+        }
+        return json.data;
+    }
+</script>
+
 <div class="popup create hide">
     <div class="users-form create">
         <div class="title">
@@ -96,19 +184,6 @@
     {% endfor %}
 </div>
 
-<form action="/users/auth" method="get" class="users-form">
-    {# TODO auth #}
-    <label>
-        <span>login:</span>
-        <input type="text" name="username">
-    </label>
-    <label>
-        <span>password:</span>
-        <input type="password" name="password">
-    </label>
-    <button>Auth</button>
-</form>
-
 <style>
     .users-list .group,
     .users-list .username,
@@ -165,6 +240,9 @@
     fetch(`/users/get`)
         .then(response => response.json())
         .then(json => {
+            if (json.error) {
+                throw new Error(json.error.message);
+            }
             Object.values(form).forEach(e => {
                 const selectGroup = e.querySelector('select[name="group_id"]');
                 if (selectGroup) {
@@ -181,7 +259,6 @@
     Object.entries(form).forEach(([name, gForm]) => {
         disableInputs(gForm);
         gForm.addEventListener('click', e => {
-            const errorEl = form[name].querySelector('.error-message');
             switch (String(e.target.nodeName).toLowerCase()) {
                 case 'input':
                     if (e.target.type === 'checkbox') {
@@ -206,7 +283,8 @@
                                     .then(response => response.json())
                                     .then(json => {
                                         if (json.error) {
-                                            errorEl.innerHTML = json.error;
+                                            const errorEl = form[e.target.className].querySelector('.error-message');
+                                            errorEl.innerHTML = json.error.message;
                                             errorEl.classList.remove('hide');
                                         } else {
                                             if (json.data.user.birthday) {
@@ -226,6 +304,7 @@
                     }
                     break;
                 case 'button':
+                    const errorEl = form[name].querySelector('.error-message');
                     errorEl.innerHTML = '';
                     errorEl.classList.add('hide');
                     const buttonEl = gForm.querySelector('button');
@@ -258,7 +337,7 @@
         }
         const json = await response.json();
         if (json.error) {
-            throw new Error(json.error);
+            throw new Error(json.error.message);
         }
         return json.data;
     }

@@ -4,7 +4,7 @@ namespace Root\App\Models;
 
 use Exception;
 use PDO;
-use Root\App\services\Database;
+use Root\App\Services\Database;
 use Root\App\Services\Helper;
 
 // TODO вынести в Core
@@ -38,7 +38,7 @@ abstract class BaseModel
      * Правила валидации
      * @return array
      */
-    protected function rules(): array
+    static protected function rules(): array
     {
         return [
             // 'fieldName' => [
@@ -51,7 +51,7 @@ abstract class BaseModel
      * Правила преобразования при установке значения
      * @return array
      */
-    protected function setters(): array
+    static protected function setters(): array
     {
         return [
             // 'fieldName' => [
@@ -60,19 +60,38 @@ abstract class BaseModel
         ];
     }
     
+    /**
+     * Преобразование значения
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+    static public function setter(string $name, mixed $value): mixed
+    {
+        if (array_key_exists($name, static::setters())) {
+            foreach (static::setters()[$name] as $fn) {
+                $value = $fn($value);
+            }
+        }
+        return $value;
+    }
+    
     
     // Model
     protected array $fields = [];
     
     /**
-     * @throws Exception
+     * @param ?array $props
      */
-    public function __construct(array $props = [])
+    public function __construct(?array $props = [])
     {
         try {
             $className = $this::getClassName();
             $columns = $this::getColumns();
             $unique = $this::getUnique();
+            if (!$props) {
+                $props = [];
+            }
             foreach ($columns as $name => $typeData) {
                 $this->fields[$name] = new BaseField(
                     $className,
@@ -102,13 +121,18 @@ abstract class BaseModel
      */
     public function __set(string $name, $value): void
     {
+        // TODO ПОЧИНИТЬ ВАЛИДАЦИЮ
         $this->checkFieldExist($name, 'set');
-        if (array_key_exists($name, $this->setters())) {
-            foreach ($this->setters()[$name] as $fn) {
-                $value = $fn($value);
-            }
-        }
-        $this->fields[$name]($value, true);
+        // echo '<pre>';
+        // print_r(['name' => $name, 'value' => $value]);
+        // echo '</pre>';
+        // if (array_key_exists($name, $this::setters())) {
+        //     foreach ($this::setters()[$name] as $fn) {
+        //         $value = $fn($value);
+        //     }
+        // }
+        // $this->fields[$name]($value, true);
+        $this->fields[$name]($this::setter($name, $value), true);
     }
     
     /**

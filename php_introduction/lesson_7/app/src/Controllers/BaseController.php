@@ -6,6 +6,7 @@ use Exception;
 use Root\App\Services\Helper;
 use Root\App\Services\Render;
 
+// TODO переработать Render -> __call (err404)
 abstract class BaseController
 {
     protected ?string $templateFolder = null; // ex: content/page
@@ -79,11 +80,28 @@ abstract class BaseController
     
     protected function encodeData($data): array
     {
+        $data = preg_replace('#<(script|link|meta|style|i?frame).*>#is', '$2', $data);
         $json = json_encode(
             $data,
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS
         );
         $json = str_replace('\\', '\\\\\\', $json);
         return json_decode($json, true);
+    }
+    
+    /**
+     * @param mixed $data
+     * @param ?mixed $error
+     * @return bool|string
+     */
+    protected function response(mixed $data, mixed $error = null): bool|string
+    {
+        if ($error instanceof \Throwable) {
+            $error = [
+                'code' => $error->getCode(),
+                'message' => $error->getMessage(),
+            ];
+        }
+        return json_encode(['data' => $data, 'error' => $error], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }
