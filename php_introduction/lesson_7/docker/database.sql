@@ -63,4 +63,4 @@ insert into myApp.users(`username`, `password`, `group_id`, `email`)
 values ('admin',
         '$2y$10$w2lV/9i9leJTZbXm7nMxVeDuMRqBXl4dereB.sCYIRpCFWg5.3JSO',
         (select `id` from myApp.groups where `name` = 'admin'),
-        '');
+        'admin@example.tt');
