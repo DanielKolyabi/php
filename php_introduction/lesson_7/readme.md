@@ -12,6 +12,8 @@ sh start.sh lesson7 application && exit
 
 [go to site](http://mysite.local:81)
 
+[database.sql](docker/database.sql)
+
 ### Д/З
 
 1. **[Есть](app/src/Controllers/BaseController.php) `fn: dataGet()`** При помощи регулярных выражений усильте проверку данных в validateRequestData так, чтобы пользователь не смог
