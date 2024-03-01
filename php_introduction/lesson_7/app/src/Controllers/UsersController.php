@@ -86,6 +86,9 @@ class UsersController extends BaseController
         // TODO добавить проверку на группу (only user)
         try {
             $get = $this->dataGet();
+            if (UserModel::find(['username' => $get['username']], true)) {
+                throw new Exception('Username is taken');
+            }
             $user = new UserModel();
             foreach ($get as $key => $value) {
                 $user->$key = $value;
