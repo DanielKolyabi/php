@@ -1,0 +1,18 @@
+/* <!-- <editor-folder Mixins> --> */
+@mixin flex($direction: row, $justify: stretch, $align: stretch, $gap: 0px) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: wrap;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+@mixin flexRow($justify: stretch, $align: stretch, $gap: 0px) {
+  @include flex(row, $justify, $align, $gap);
+}
+
+@mixin flexColumn($justify: stretch, $align: stretch, $gap: 0px) {
+  @include flex(column, $align, $justify, $gap);
+}
+/* <!-- </editor-folder--> */
