@@ -10,8 +10,8 @@ RUN apk add \
     curl \
     wget \
     git \
-	zip \
-	unzip \
+    zip \
+    unzip \
     oniguruma \
     openssl
 
