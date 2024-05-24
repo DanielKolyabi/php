@@ -52,3 +52,6 @@ php runner -c queue_manager
 - Включены сокеты для PHP контейнеров
 - Исправлены настройки подключения AMQP "//localhost:5672" -> "//rmq:5672"
 ```
+![img1](img/rmq_1.png)
+![img2](img/rmq_2.png)
+![img3](img/rmq_3.png)
