@@ -15,6 +15,11 @@ sh scripts/stop.sh && exit # Остановка проекта
 ![lesson_1](screenshots/lesson_1.png)
 
 </details>
+<details class="block"><summary>lesson 2</summary>
+
+[lesson_2 commit](https://github.com/crasher307/php/pull/1/files)
+
+</details>
 
 ### <div class="hidden">Other</div>
 <details class="block hidden"><summary>Стили для IDE</summary>
