@@ -9,6 +9,15 @@ sh scripts/start.sh && exit # Запуск проекта
 sh scripts/stop.sh && exit # Остановка проекта
 ```
 
+- Добавить зеркала для Docker (Windows: `%USERNAME%\.docker\daemon.json`)
+```text
+"registry-mirrors": [
+    "https://huecker.io",
+    "https://daocloud.io",
+    "https://mirror.gcr.io"
+]
+```
+
 ### Homeworks
 <details class="block"><summary>lesson 1</summary>
 
@@ -18,6 +27,12 @@ sh scripts/stop.sh && exit # Остановка проекта
 <details class="block"><summary>lesson 2</summary>
 
 [lesson_2 commit](https://github.com/crasher307/php/pull/1/files)
+
+</details>
+<details class="block"><summary>lesson 3</summary>
+
+![lesson_3](screenshots/lesson_3.png)
+[lesson_3 commit](https://github.com/crasher307/php/pull/2/files)
 
 </details>
 
