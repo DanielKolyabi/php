@@ -17,3 +17,7 @@ use App\Http\Controllers\FormProcessor;
 Route::get('/', fn() => view('main.index'))->name('home');
 Route::get('/userform', [FormProcessor::class, 'index'])->name('userform');
 Route::post('/store_form', [FormProcessor::class, 'store'])->name('store_form');
+Route::get('/test_database', function () {
+    $employee = new \App\Models\Employee();
+    return (object)['result' => $employee->save()];
+})->name('test_database');
