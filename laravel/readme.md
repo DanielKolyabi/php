@@ -13,6 +13,7 @@ sh scripts/stop.sh && exit # Остановка проекта
 ```text
 "registry-mirrors": [
     "https://huecker.io",
+    "https://dockerhub.timeweb.cloud",
     "https://daocloud.io",
     "https://mirror.gcr.io"
 ]
@@ -33,6 +34,16 @@ sh scripts/stop.sh && exit # Остановка проекта
 
 ![lesson_3](screenshots/lesson_3.png)
 [lesson_3 commit](https://github.com/crasher307/php/pull/2/files)
+
+</details>
+<details class="block"><summary>lesson 4</summary>
+
+[lesson_4 commit](https://github.com/crasher307/php/pull/3/files)
+
+</details>
+<details class="block"><summary>lesson 5</summary>
+
+[lesson_5 commit](https://github.com/crasher307/php/pull/4/files)
 
 </details>
 
