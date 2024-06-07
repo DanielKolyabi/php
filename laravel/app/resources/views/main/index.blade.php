@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.default')
 
 @section('page.title', config('app.name'))
 
