@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FormProcessor;
+use App\Http\Controllers\EmployeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +27,14 @@ Route::get('/contacts', fn() => view('main.contacts', [
     'email' => '',
     'phone' => '8 800 XXX XX XX',
 ]))->name('contacts');
+
 Route::get('/userform', [FormProcessor::class, 'index'])->name('userform');
 Route::post('/store_form', [FormProcessor::class, 'store'])->name('store_form');
+
+Route::get('/employee', [EmployeeController::class, 'index'])->name('employee');
+Route::post('/employee_store', [EmployeeController::class, 'store'])->name('employee_store');
+Route::put('/employee/{id}', [EmployeeController::class, 'update']);
+
 Route::get('/test_database', function () {
     $employee = new \App\Models\Employee();
     return (object)['result' => $employee->save()];
