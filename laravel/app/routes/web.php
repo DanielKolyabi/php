@@ -14,7 +14,18 @@ use App\Http\Controllers\FormProcessor;
 |
 */
 
-Route::get('/', fn() => view('main.index'))->name('home');
+Route::get('/', fn() => view('main.home', [
+    'name' => 'Name',
+    'age' => '18',
+    'position' => 'Position',
+    'address' => 'Address',
+]))->name('home');
+Route::get('/contacts', fn() => view('main.contacts', [
+    'address' => 'Address',
+    'post_code' => 'Post code',
+    'email' => '',
+    'phone' => '8 800 XXX XX XX',
+]))->name('contacts');
 Route::get('/userform', [FormProcessor::class, 'index'])->name('userform');
 Route::post('/store_form', [FormProcessor::class, 'store'])->name('store_form');
 Route::get('/test_database', function () {

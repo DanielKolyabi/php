@@ -11,5 +11,8 @@
         <a class="nav-item nav-link {{active_link('/userform')}}" href="{{route('userform')}}">
             {{__('UserForm')}}
         </a>
+        <a class="nav-item nav-link {{active_link('/contacts')}}" href="{{route('contacts')}}">
+            {{__('Contacts')}}
+        </a>
     </div>
 </nav>
