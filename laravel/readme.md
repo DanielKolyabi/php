@@ -8,6 +8,7 @@ sh scripts/start.sh && exit # Запуск проекта
 ```sh
 sh scripts/stop.sh && exit # Остановка проекта
 ```
+<details class="block"><summary>Docker mirrors</summary>
 
 - Добавить зеркала для Docker (Windows: `%USERNAME%\.docker\daemon.json`)
 ```text
@@ -18,6 +19,8 @@ sh scripts/stop.sh && exit # Остановка проекта
     "https://mirror.gcr.io"
 ]
 ```
+
+</details>
 
 ### Homeworks
 <details class="block"><summary>lesson 1</summary>
@@ -44,6 +47,11 @@ sh scripts/stop.sh && exit # Остановка проекта
 <details class="block"><summary>lesson 5</summary>
 
 [lesson_5 commit](https://github.com/crasher307/php/pull/4/files)
+
+</details>
+<details class="block"><summary>lesson 6</summary>
+
+[lesson_6 commit](https://github.com/crasher307/php/pull/5/files)
 
 </details>
 
