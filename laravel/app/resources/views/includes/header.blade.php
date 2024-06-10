@@ -14,5 +14,8 @@
         <a class="nav-item nav-link {{active_link('/contacts')}}" href="{{route('contacts')}}">
             {{__('Contacts')}}
         </a>
+        <a class="nav-item nav-link {{active_link('/book')}}" href="{{route('book')}}">
+            {{__('Add Book')}}
+        </a>
     </div>
 </nav>
