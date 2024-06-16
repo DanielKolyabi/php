@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\PdfGeneratorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FormProcessor;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +45,8 @@ Route::get('/test_database', function () {
     $employee = new \App\Models\Employee();
     return (object)['result' => $employee->save()];
 })->name('test_database');
+
+Route::get('/user', [UserController::class, 'index']);
+Route::get('/user/{id}', [UserController::class, 'get']);
+Route::post('/store-user', [UserController::class, 'store']);
+Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
