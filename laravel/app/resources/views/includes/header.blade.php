@@ -20,5 +20,8 @@
         <a class="nav-item nav-link {{active_link('/user/all')}}" href="{{url('/user/all')}}">
             {{__('Users')}}
         </a>
+        <a class="nav-item nav-link {{active_link('/logs')}}" href="{{url('/logs')}}">
+            {{__('Logs')}}
+        </a>
     </div>
 </nav>
