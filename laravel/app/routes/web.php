@@ -6,6 +6,7 @@ use App\Http\Controllers\FormProcessor;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,3 +51,6 @@ Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}', [UserController::class, 'get']);
 Route::post('/store-user', [UserController::class, 'store']);
 Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
+
+Route::get('/logs', [LogController::class, 'index']);
+Route::get('/logs/{page}', [LogController::class, 'index']);

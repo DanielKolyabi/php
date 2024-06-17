@@ -54,29 +54,21 @@ class UserController extends Controller
 
     public function get(Request $request, $id): View|Closure|string
     {
-        try {
-            $result = null;
-            if ($id === 'all') {
-                $model = User::all();
-                if ($model) {
-                    $result = ['users' => []];
-                    foreach ($model->getDictionary() as $value) {
-                        $result['users'][] = $value->getAttributes();
-                    }
-                } else {
-                    $result = ['error' => 'Users not found'];
+        $result = null;
+        if ($id === 'all') {
+            $model = User::all();
+            if ($model) {
+                $result = ['users' => []];
+                foreach ($model->getDictionary() as $value) {
+                    $result['users'][] = $value->getAttributes();
                 }
             } else {
-                $model = User::query()->where('id', $id)->first();
-                $result = $model ? $model->getAttributes() : ['error' => 'User not found'];
+                $result = ['error' => 'Users not found'];
             }
-
-            return $this->render->render('store', (object)($result));
-        } catch (ValidationException $e) {
-            return $this->render->render(
-                'store',
-                (object)['error' => $e->getMessage()]
-            );
+        } else {
+            $model = User::query()->where('id', $id)->first();
+            $result = $model ? $model->getAttributes() : ['error' => 'User not found'];
         }
+        return $this->render->render('store', (object)($result));
     }
 }

@@ -4,6 +4,12 @@
     <div class="card">
         <div class="container pt-2 pb-2">
             <div class="row">
+                <div class="col-12 pb-2 d-flex justify-content-end">
+                    <a href="/user" class="btn btn-primary col-12 col-sm-4">New user</a>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-4">ID</div>
                 <div class="col-4">Email</div>
                 <div class="col-4">Created at</div>
