@@ -69,6 +69,15 @@ sh scripts/stop.sh && exit # Остановка проекта
 [lesson_9 commit](https://github.com/crasher307/php/pull/8/files)
 
 </details>
+<details class="block"><summary>lesson 10</summary>
+
+[lesson_10 commit](https://github.com/crasher307/php/pull/9/files)
+```console
+php artisan queue:listen
+php artisan schedule:work
+```
+
+</details>
 
 ### <div class="hidden">Other</div>
 <details class="block hidden"><summary>Стили для IDE</summary>
