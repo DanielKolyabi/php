@@ -78,6 +78,16 @@ php artisan schedule:work
 ```
 
 </details>
+<details class="block"><summary>lesson 11</summary>
+
+[lesson_11 commit](https://github.com/crasher307/php/pull/10/files)
+```console
+docker exec -it laravel bash
+npm i
+nmp run build
+```
+
+</details>
 
 ### <div class="hidden">Other</div>
 <details class="block hidden"><summary>Стили для IDE</summary>
