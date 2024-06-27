@@ -8,6 +8,7 @@
         <a class="nav-item nav-link {{active_link('/')}}" href="{{route('home')}}">
             {{__('Главная')}}
         </a>
+        <!--
         <a class="nav-item nav-link {{active_link('/userform')}}" href="{{route('userform')}}">
             {{__('UserForm')}}
         </a>
@@ -23,5 +24,27 @@
         <a class="nav-item nav-link {{active_link('/logs')}}" href="{{url('/logs')}}">
             {{__('Logs')}}
         </a>
+        -->
+        <a class="nav-item nav-link {{active_link('/users')}}" href="{{url('/users')}}">
+            {{__('Users')}}
+        </a>
+        @guest
+            <a class="nav-item nav-link {{active_link('/login')}}" href="{{url('/login')}}">
+                {{__('Login')}}
+            </a>
+            <a class="nav-item nav-link {{active_link('/register')}}" href="{{url('/register')}}">
+                {{__('Register')}}
+            </a>
+        @endguest
+        @auth
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <x-responsive-nav-link :href="route('logout')"
+                                       onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                    {{ __('Log Out') }}
+                </x-responsive-nav-link>
+            </form>
+        @endauth
     </div>
 </nav>
