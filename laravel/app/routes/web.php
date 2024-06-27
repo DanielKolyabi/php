@@ -2,6 +2,8 @@
 
 use App\Events\NewsHidden;
 use App\Http\Controllers\PdfGeneratorController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsersController;
 use App\Models\News;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FormProcessor;
@@ -20,6 +22,10 @@ use App\Http\Controllers\LogController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/', fn() => view('main.home', [
     'name' => 'Name',
@@ -49,10 +55,23 @@ Route::get('/test_database', function () {
     return (object)['result' => $employee->save()];
 })->name('test_database');
 
-Route::get('/user', [UserController::class, 'index']);
-Route::get('/user/{id}', [UserController::class, 'get']);
-Route::post('/store-user', [UserController::class, 'store']);
-Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/users', [UsersController::class, 'index']);
+    // Route::get('/user', [UserController::class, 'index']);
+    // Route::get('/user/{id}', [UserController::class, 'get']);
+    // Route::post('/store-user', [UserController::class, 'store']);
+    // Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
 
 Route::get('/logs', [LogController::class, 'index']);
 Route::get('/logs/{page}', [LogController::class, 'index']);
