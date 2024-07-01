@@ -1,0 +1,36 @@
+### Получение списка всех продуктов
+GET http://localhost/api/products
+
+### Получение продукта
+GET http://localhost/api/products/{{product_id}}
+
+### Добавление продукта
+POST http://localhost/api/products
+Content-type: application/json
+
+{
+  "sku": "Hello",
+  "name": "World",
+  "price": 1024.04
+}
+
+### Обновление всех данных по продукту
+PUT http://localhost/api/products/{{product_id}}
+Content-type: application/json
+
+{
+  "sku": "Hello-TEST",
+  "name": "World-TEST",
+  "price": 127.01
+}
+
+### Обновление данных по продукту
+PATCH http://localhost/api/products/{{product_id}}
+Content-type: application/json
+
+{
+  "name": "World-UPDATE"
+}
+
+### Удаление продукта
+DELETE http://localhost/api/products/{{product_id}}
