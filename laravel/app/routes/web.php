@@ -103,3 +103,9 @@ Route::get('test-telegram', function () {
         'status' => 'success'
     ]);
 });
+
+
+Route::group(['prefix' => 'admin'], function () {
+    // Voyager::routes();
+    Voyager::routes();
+});
