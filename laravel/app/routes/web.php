@@ -11,6 +11,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LogController;
+use Telegram\Bot\Api;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,4 +91,15 @@ Route::get('news/{id}/hide', function ($id) {
     $news->save();
     NewsHidden::dispatch($news);
     return 'News hidden';
+});
+Route::get('test-telegram', function () {
+    $telegram = new Api(env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'));
+    $telegram->sendMessage([
+        'chat_id' => env('TELEGRAM_CHAT_ID', ''),
+        'text' => 'Hello World'
+    ]);
+
+    return response()->json([
+        'status' => 'success'
+    ]);
 });
