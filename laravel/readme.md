@@ -115,6 +115,17 @@ nmp run build
 - Destroy: ![lesson_13_destroy](screenshots/lesson_13/destroy.png)
 
 </details>
+<details class="block"><summary>lesson 14 (Промежуточная аттестация)</summary>
+
+[lesson_14 commit](https://github.com/crasher307/php/pull/13/files)
+```console
+docker exec -it laravel bash
+php artisan db:seed
+npm i
+nmp run build
+```
+
+</details>
 
 ### <div class="hidden">Other</div>
 <details class="block hidden"><summary>Стили для IDE</summary>
