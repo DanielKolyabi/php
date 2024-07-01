@@ -98,6 +98,23 @@ nmp run build
 ```
 
 </details>
+<details class="block"><summary>lesson 13</summary>
+
+[lesson_13 commit](https://github.com/crasher307/php/pull/12/files)
+```console
+docker exec -it laravel bash
+php artisan db:seed
+npm i
+nmp run build
+```
+
+- Index: ![lesson_13_index](screenshots/lesson_13/index.png)
+- Show: ![lesson_13_show](screenshots/lesson_13/show.png)
+- Store: ![lesson_13_store](screenshots/lesson_13/store.png)
+- Update: ![lesson_13_update](screenshots/lesson_13/update.png)
+- Destroy: ![lesson_13_destroy](screenshots/lesson_13/destroy.png)
+
+</details>
 
 ### <div class="hidden">Other</div>
 <details class="block hidden"><summary>Стили для IDE</summary>
